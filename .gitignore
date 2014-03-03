@@ -1,5 +1,6 @@
 .DS_Store
+browserify/js/config.js
 config/config-main.js
-node_modules
 files
+node_modules
 public
