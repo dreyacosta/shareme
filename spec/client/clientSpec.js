@@ -35,13 +35,22 @@ app.templates = {
 };
 
 app.socket  = app.imports.io.connect();
+app.config  = require('./config');
 app.utils   = require('./utils').init(app);
 app.models  = require('./models').init(app);
 app.views   = require('./views').init(app);
 app.routers = require('./routers').init(app);
 
 module.exports = app;
-},{"./models":2,"./routers":5,"./templates/file":7,"./templates/menu":8,"./templates/profileName":9,"./templates/upload":11,"./utils":12,"./views":13,"backbone":18,"browserify-zepto":19,"socket.io-client":21,"underscore":22}],2:[function(require,module,exports){
+},{"./config":2,"./models":3,"./routers":6,"./templates/file":8,"./templates/menu":9,"./templates/profileName":10,"./templates/upload":12,"./utils":13,"./views":14,"backbone":19,"browserify-zepto":20,"socket.io-client":22,"underscore":23}],2:[function(require,module,exports){
+module.exports = {
+  api: {
+    file: '/api/upload/file',
+    room: '/api/create/room'
+  },
+  roomLifespan: 90
+};
+},{}],3:[function(require,module,exports){
 exports.init = function(app) {
   var models = {};
 
@@ -50,7 +59,7 @@ exports.init = function(app) {
 
   return models;
 };
-},{"./models-file":3,"./models-room":4}],3:[function(require,module,exports){
+},{"./models-file":4,"./models-room":5}],4:[function(require,module,exports){
 exports.init = function(app) {
   var _        = app.imports._,
       $        = app.imports.$,
@@ -59,7 +68,7 @@ exports.init = function(app) {
   app.active.fileModels = [];
 
   return Backbone.Model.extend({
-    url: '/api/upload/file',
+    url: app.config.api.file,
 
     defaults: {
       type         : '',
@@ -111,24 +120,24 @@ exports.init = function(app) {
     }
   });
 };
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 exports.init = function(app) {
   var _        = app.imports._,
       $        = app.imports.$,
       Backbone = app.imports.Backbone;
 
   return Backbone.Model.extend({
-    url: '/api/create/room',
+    url: app.config.api.room,
 
     defaults: {
       room          : '',
       connections   : 0,
-      timeRemaining : '30:00',
+      timeRemaining : '90:00',
       creationDate  : new Date()
     },
   });
 };
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 exports.init = function(app) {
   var routers = {};
 
@@ -136,7 +145,7 @@ exports.init = function(app) {
 
   return routers;
 };
-},{"./routers-main":6}],6:[function(require,module,exports){
+},{"./routers-main":7}],7:[function(require,module,exports){
 exports.init = function(app) {
   var socket    = app.socket,
       Backbone  = app.imports.Backbone;
@@ -190,7 +199,7 @@ exports.init = function(app) {
     }
   });
 };
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var jade = require('./runtime');
 
 (function (jade) {
@@ -222,7 +231,7 @@ buf.push('<div style="background: rgb(0, 214, 255); width: 0%;" class="progressB
 return buf.join("");
 };
 })(jade);
-},{"./runtime":10}],8:[function(require,module,exports){
+},{"./runtime":11}],9:[function(require,module,exports){
 var jade = require('./runtime');
 
 (function (jade) {
@@ -236,7 +245,7 @@ buf.push('<span class="createRoom text bold cursor pointer"><span class="fa fa-p
 return buf.join("");
 };
 })(jade);
-},{"./runtime":10}],9:[function(require,module,exports){
+},{"./runtime":11}],10:[function(require,module,exports){
 var jade = require('./runtime');
 
 (function (jade) {
@@ -250,7 +259,7 @@ buf.push('<div class="flex"><div class="anchor1 padding_medium width30 border ra
 return buf.join("");
 };
 })(jade);
-},{"./runtime":10}],10:[function(require,module,exports){
+},{"./runtime":11}],11:[function(require,module,exports){
 (function (exports) {
 	
 /*!
@@ -428,7 +437,7 @@ exports.rethrow = function rethrow(err, filename, lineno){
 };
 
 })(module.exports);
-},{"fs":20}],11:[function(require,module,exports){
+},{"fs":21}],12:[function(require,module,exports){
 var jade = require('./runtime');
 
 (function (jade) {
@@ -444,7 +453,7 @@ buf.push('>' + escape((interp = model.room) == null ? '' : interp) + '</a></span
 return buf.join("");
 };
 })(jade);
-},{"./runtime":10}],12:[function(require,module,exports){
+},{"./runtime":11}],13:[function(require,module,exports){
 exports.init = function(app) {
   var utils = {};
 
@@ -508,7 +517,7 @@ exports.init = function(app) {
 
   return utils;
 };
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 exports.init = function(app) {
   var views = {};
 
@@ -518,7 +527,7 @@ exports.init = function(app) {
 
   return views;
 };
-},{"./views-file":14,"./views-menu":15,"./views-upload":16}],14:[function(require,module,exports){
+},{"./views-file":15,"./views-menu":16,"./views-upload":17}],15:[function(require,module,exports){
 exports.init = function(app) {
   var templates = app.templates,
       socket    = app.socket,
@@ -581,7 +590,7 @@ exports.init = function(app) {
     }
   });
 };
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 exports.init = function(app) {
   var templates = app.templates,
       socket    = app.socket,
@@ -641,7 +650,7 @@ exports.init = function(app) {
     }
   });
 };
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 exports.init = function(app) {
   var templates = app.templates,
       regions   = app.regions,
@@ -794,7 +803,7 @@ exports.init = function(app) {
       var self          = this,
           creationDate  = this.model.get('creationDate');
 
-      this.timer = new utils.TimeRemaining(creationDate, 30);
+      this.timer = new utils.TimeRemaining(creationDate, app.config.roomLifespan);
 
       this.timerInterval = setInterval(function() {
         var timer = self.timer,
@@ -839,7 +848,7 @@ exports.init = function(app) {
     }
   });
 };
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var app = require('../js/app');
 var Backbone = app.imports.Backbone;
 
@@ -880,7 +889,7 @@ describe("Room model", function() {
     });
   });
 });
-},{"../js/app":1}],18:[function(require,module,exports){
+},{"../js/app":1}],19:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -2490,7 +2499,7 @@ describe("Room model", function() {
 
 }));
 
-},{"underscore":22}],19:[function(require,module,exports){
+},{"underscore":23}],20:[function(require,module,exports){
 /* Zepto v1.1.3 - zepto event ajax form ie - zeptojs.com/license */
 
 
@@ -4042,9 +4051,9 @@ var Zepto = module.exports = (function() {
   }
 })(Zepto)
 
-},{}],20:[function(require,module,exports){
-
 },{}],21:[function(require,module,exports){
+
+},{}],22:[function(require,module,exports){
 /*! Socket.IO.js build:0.9.16, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
 
 var io = ('undefined' === typeof module ? {} : module.exports);
@@ -7918,7 +7927,7 @@ if (typeof define === "function" && define.amd) {
   define([], function () { return io; });
 }
 })();
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -9263,4 +9272,4 @@ if (typeof define === "function" && define.amd) {
   }
 }).call(this);
 
-},{}]},{},[17])
+},{}]},{},[18])

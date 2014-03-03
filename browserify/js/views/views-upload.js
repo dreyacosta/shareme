@@ -150,7 +150,7 @@ exports.init = function(app) {
       var self          = this,
           creationDate  = this.model.get('creationDate');
 
-      this.timer = new utils.TimeRemaining(creationDate, 30);
+      this.timer = new utils.TimeRemaining(creationDate, app.config.roomLifespan);
 
       this.timerInterval = setInterval(function() {
         var timer = self.timer,

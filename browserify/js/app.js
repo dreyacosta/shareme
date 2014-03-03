@@ -34,6 +34,7 @@ app.templates = {
 };
 
 app.socket  = app.imports.io.connect();
+app.config  = require('./config');
 app.utils   = require('./utils').init(app);
 app.models  = require('./models').init(app);
 app.views   = require('./views').init(app);

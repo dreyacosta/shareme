@@ -6,7 +6,7 @@ exports.init = function(app) {
   app.active.fileModels = [];
 
   return Backbone.Model.extend({
-    url: '/api/upload/file',
+    url: app.config.api.file,
 
     defaults: {
       type         : '',

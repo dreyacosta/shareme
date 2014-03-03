@@ -4,12 +4,12 @@ exports.init = function(app) {
       Backbone = app.imports.Backbone;
 
   return Backbone.Model.extend({
-    url: '/api/create/room',
+    url: app.config.api.room,
 
     defaults: {
       room          : '',
       connections   : 0,
-      timeRemaining : '30:00',
+      timeRemaining : '90:00',
       creationDate  : new Date()
     },
   });
