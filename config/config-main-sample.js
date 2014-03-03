@@ -19,7 +19,8 @@ module.exports = {
       service: 'Gmail',
       user: 'youremail@gmail.com',
       pass: 'yourpass'
-    }
+    },
+    roomLifespan: 90
   },
   production: {
     env: 'prod',
@@ -41,7 +42,8 @@ module.exports = {
       service: 'Gmail',
       user: 'youremail@gmail.com',
       pass: 'yourpass'
-    }
+    },
+    roomLifespan: 90
   },
   simplemocha: {
     env: 'test',
@@ -63,6 +65,7 @@ module.exports = {
       service: 'Gmail',
       user: 'youremail@gmail.com',
       pass: 'yourpass'
-    }
+    },
+    roomLifespan: 90
   },
 };

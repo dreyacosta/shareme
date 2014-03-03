@@ -1,7 +1,9 @@
 exports.init = function(noderplate) {
-  var rooms = {},
-      model = noderplate.app.models,
-      fs    = noderplate.imports.fs;
+  var rooms   = {},
+      sockets = noderplate.io.sockets,
+      model   = noderplate.app.models,
+      core    = noderplate.app.core,
+      fs      = noderplate.imports.fs;
 
   var RoomRemaining = function(roomData, remainingMinutes) {
     var self = {};
@@ -35,17 +37,17 @@ exports.init = function(noderplate) {
       if (self.timeRemaining === '00:01') {
         clearInterval(self.remainingInterval);
         model.File.find({room: roomData.room}, function(err, files) {
-          noderplate.io.sockets.emit('file:removed', files.length);
+          sockets.emit('file:removed', files.length);
           if (files) {
             for (var idx in files) {
               var file = files[idx];
-              noderplate.app.core.data.deleteFile(file.path);
+              core.data.deleteFile(file.path);
               file.remove();
             }
           }
         });
         model.Room.remove({room: roomData.room}, function(err) {
-          noderplate.app.core.data.removeDirectory('./files/' + roomData.room);
+          core.data.removeDirectory('./files/' + roomData.room);
         });
       }
     }, 1000);
@@ -54,7 +56,7 @@ exports.init = function(noderplate) {
   rooms.create = function(req, res) {
     var room = req.core.rooms.create();
 
-    new RoomRemaining(room, 30);
+    new RoomRemaining(room, noderplate.config.roomLifespan);
 
     return res.jsonp(room);
   };
