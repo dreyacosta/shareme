@@ -1,0 +1,40 @@
+extends header
+
+block content
+  #upload.flex.x_center
+
+  if sharefiles < 2000
+    .anchor1.scroll
+
+      .flex.column
+        #files.site_width.anchor
+          .padding_big
+            h1.text.normal.color.c_mysauce2.center 30 minutes of free unlimited space
+            h1.text.normal.color.c_mysauce2.center.margin_bottom_big to upload your files into shared rooms.
+
+            h4.margin_bottom_small 1. Create or connect to a room.
+            p A room is a 30 minutes channel of free unlimited space where you can share files with people who have the room code.
+
+            h4.margin_bottom_small 2. Upload or download files.
+            p Once you're in a room you can upload and download files from there.
+
+            h4.margin_bottom_small 3. Once room expire.
+            p After 30 minutes the room and files expires and are automatically destroyed.
+
+
+    .anchor.text.small.center.padding_small.bck.b_mysauce3_light
+      a(href='#')
+        span Open source project
+        span.fa.fa-github.padding_left_small.padding_right_small
+        span View source on GitHub
+
+    if env == 'dev'
+      script(src='/js/app.js')
+    if env == 'prod'
+      script(src='/js/app.min.js')
+  else
+    .anchor1.flex.column.y_center.x_center.scroll
+      h1.text.center The server is overload
+      h3.text.normal.center.margin_bottom_big
+        a(href='/')
+          span Try again later.

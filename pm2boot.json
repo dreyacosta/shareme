@@ -1,0 +1,6 @@
+{
+  "name" : "Shareme",
+  "script" : "./app.js",
+  "instances": "max",
+  "NODE_ENV": "production"
+}

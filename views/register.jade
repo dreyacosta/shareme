@@ -1,0 +1,16 @@
+extends header
+
+block content
+  #upload.flex.x_center
+
+  .anchor1.scroll
+
+    .flex.x_center.margin_top_medium
+      .flex.column.bck.b_white.padding_medium.border.rad_small.width30
+        h3 Register
+        form.flex.column(method='post', action='/register')
+          input.border.solid.all_small.margin_bottom_small.padding_medium(type='text', name='username', placeholder='Username')
+          input.border.solid.all_small.margin_bottom_small.padding_medium(type='email', name='email', placeholder='Email')
+          input.border.solid.all_small.margin_bottom_small.padding_medium(type='password', name='pass', placeholder='Password')
+          input.border.solid.all_small.margin_bottom_medium.padding_medium(type='password', name='confirmPass', placeholder='Confirm password')
+          input.border.solid.all_small.bck.b_blue.padding_medium.margin_bottom_small.text.center.color.c_white.anchor(type='submit', value='Sign up')

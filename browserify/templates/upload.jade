@@ -1,0 +1,19 @@
+.flex
+  .joinRoom.anchor2.text.center.color.c_white
+    input.anchor.border.none.padding_medium(type='text', placeholder='Room code')
+  .connectRoom.anchor1.flex.x_center.y_center.bck.b_mysauce1_dark.padding_medium.text.center.color.c_white.cursor.pointer
+    span.fa.fa-sign-in.padding_right_small
+    span Connect
+  .room.anchor3.bck.b_white.padding_medium.text.bold.center.hidden
+    span.fa.fa-lock.padding_right_small
+    span
+      a(href='http://shareme.io/#{model.room}') #{model.room}
+  .connections.anchor2.bck.b_green.padding_medium.text.center.color.c_white.hidden
+    span.fa.fa-user.padding_right_small
+    span #{model.connections}
+  .timer.anchor3.bck.b_red.padding_medium.text.center.color.c_white.hidden
+    span.fa.fa-clock-o.padding_right_small
+    span #{model.timeRemaining}
+  .uploadFiles.anchor1.bck.b_mysauce1_dark.padding_medium.text.center.color.c_white.cursor.pointer.hidden
+    span.fa.fa-cloud-upload
+    span.padding_left_small.desktop Upload

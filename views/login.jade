@@ -1,0 +1,16 @@
+extends header
+
+block content
+  #upload.flex.x_center
+
+  .anchor1.scroll
+
+    .flex.x_center.margin_top_medium
+      .flex.column.bck.b_white.padding_medium.border.rad_small.width30
+        h3 Login
+        form.flex.column(method='post', action='/login')
+          input.border.solid.all_small.margin_bottom_small.padding_medium(type='text', name='username', placeholder='Username')
+          input.border.solid.all_small.margin_bottom_medium.padding_medium(type='password', name='pass', placeholder='Password')
+          input.border.solid.all_small.bck.b_blue.padding_medium.margin_bottom_small.text.center.color.c_white.anchor(type='submit', value='Sign in')
+          .text.center
+            span Forgot your password?

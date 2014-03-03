@@ -1,0 +1,19 @@
+.flex.y_center.padding_medium.border.solid.bottom_small
+  .anchor5
+    div
+      span.text.bold #{model.name}
+    div.text.small.desktop
+      span.middle #{model.size}
+      if model.filename
+        span.middle.padding_left_small -
+        input.middle.bck.b_mysauce3.border.none.width40.text.book(value='http://shareme.io/#{model.room}/file/#{model.filename}', disabled)
+  .anchor1.text.right.bck.b_mysauce4.text.color.c_white.border.rad_small
+    if model.filename
+      a(href='/#{model.room}/file/#{model.filename}', target='_blank')
+        .downloadLink.text.center.padding_small
+          span.fa.fa-download
+          span.padding_left_small.desktop Download
+    else
+      .queueFile.text.center.padding_small
+        span.desktop Queue file
+    .progressBar.border.rad_small.hidden.padding_small(style='background: rgb(0, 214, 255); width: 0%;')

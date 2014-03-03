@@ -1,0 +1,5 @@
+.DS_Store
+config/config-main.js
+node_modules
+files
+public
