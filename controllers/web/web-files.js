@@ -23,6 +23,14 @@ exports.init = function(noderplate) {
           analytic.clicks = analytic.clicks + 1;
           analytic.save();
         });
+
+        var path  = '/:room/file/preview/:filename';
+        var regex = new RegExp('image|pdf|text\/plain','gi');
+
+        if (req.route.path === path && regex.test(fileModel.type)) {
+          return res.sendfile(fileModel.path);
+        }
+
         return res.download(fileModel.path);
       }
     })
@@ -30,5 +38,6 @@ exports.init = function(noderplate) {
       return res.render('filenotfound', {});
     });
   };
+
   return files;
 };

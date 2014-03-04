@@ -208,7 +208,9 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="flex y_center padding_medium border solid bottom_small"><div class="anchor5"><div><span class="text bold">' + escape((interp = model.name) == null ? '' : interp) + '</span></div><div class="text small desktop"><span class="middle">' + escape((interp = model.size) == null ? '' : interp) + '</span>');
+buf.push('<div class="flex y_center padding_medium border solid bottom_small"><div class="anchor5"><div><a');
+buf.push(attrs({ 'href':('/' + (model.room) + '/file/preview/' + (model.filename) + '') }, {"href":true}));
+buf.push('><span class="text bold">' + escape((interp = model.name) == null ? '' : interp) + '</span></a></div><div class="text small desktop"><span class="middle">' + escape((interp = model.size) == null ? '' : interp) + '</span>');
 if ( model.filename)
 {
 buf.push('<span class="middle padding_left_small">-</span><input');

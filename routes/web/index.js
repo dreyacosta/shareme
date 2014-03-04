@@ -8,6 +8,7 @@ exports.init = function(noderplate) {
 
   app.get('/:room?', web.home.render);
   app.get('/:room/file/:filename', web.files.getFile);
+  app.get('/:room/file/preview/:filename', web.files.getFile);
 
   // app.get('/u/login', web.users.login);
   // app.get('/u/register', web.users.register);

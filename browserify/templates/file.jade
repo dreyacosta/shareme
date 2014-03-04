@@ -1,7 +1,8 @@
 .flex.y_center.padding_medium.border.solid.bottom_small
   .anchor5
     div
-      span.text.bold #{model.name}
+      a(href='/#{model.room}/file/preview/#{model.filename}')
+        span.text.bold #{model.name}
     div.text.small.desktop
       span.middle #{model.size}
       if model.filename
