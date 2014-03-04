@@ -1,4 +1,5 @@
 .DS_Store
+browserify/js/templates
 browserify/js/config.js
 config/config-main.js
 files
