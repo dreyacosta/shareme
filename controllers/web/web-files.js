@@ -25,7 +25,7 @@ exports.init = function(noderplate) {
         });
 
         var path  = '/:room/file/preview/:filename';
-        var regex = new RegExp('image|pdf|text\/plain','gi');
+        var regex = new RegExp('image|pdf|audio|video|text\/plain','gi');
 
         if (req.route.path === path && regex.test(fileModel.type)) {
           return res.sendfile(fileModel.path);
