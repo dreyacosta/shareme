@@ -208,22 +208,22 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="flex y_center padding_medium border solid bottom_small"><div class="anchor5"><div>');
+buf.push('<div class="flex y_center padding_medium border solid top_small"><div class="anchor5"><div>');
 if ( model.filename)
 {
 buf.push('<a');
-buf.push(attrs({ 'href':('/' + (model.room) + '/file/preview/' + (model.filename) + '') }, {"href":true}));
-buf.push('><span class="text bold">' + escape((interp = model.name) == null ? '' : interp) + '</span></a>');
+buf.push(attrs({ 'href':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'target':('_blank') }, {"href":true,"target":true}));
+buf.push('><span class="text color c_black">' + escape((interp = model.name) == null ? '' : interp) + '</span></a>');
 }
 else
 {
-buf.push('<span class="text bold">' + escape((interp = model.name) == null ? '' : interp) + '</span>');
+buf.push('<span class="text color c_black">' + escape((interp = model.name) == null ? '' : interp) + '</span>');
 }
-buf.push('</div><div class="text small desktop"><span class="middle">' + escape((interp = model.size) == null ? '' : interp) + '</span>');
+buf.push('</div><div class="text small desktop">');
 if ( model.filename)
 {
-buf.push('<span class="middle padding_left_small">-</span><input');
-buf.push(attrs({ 'value':('http://shareme.io/' + (model.room) + '/file/' + (model.filename) + ''), 'disabled':(true), "class": ('middle') + ' ' + ('bck') + ' ' + ('b_mysauce3') + ' ' + ('border') + ' ' + ('none') + ' ' + ('width40') + ' ' + ('text') + ' ' + ('book') }, {"value":true,"disabled":true}));
+buf.push('<input');
+buf.push(attrs({ 'value':('http://shareme.io/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'disabled':(true), "class": ('middle') + ' ' + ('bck') + ' ' + ('b_mysauce3') + ' ' + ('border') + ' ' + ('none') + ' ' + ('width70') + ' ' + ('text') + ' ' + ('small') + ' ' + ('book') }, {"value":true,"disabled":true}));
 buf.push('/>');
 }
 buf.push('</div></div><div class="anchor1 text right bck b_mysauce4 text color c_white border rad_small">');
@@ -238,6 +238,30 @@ else
 buf.push('<div class="queueFile text center padding_small"><span class="desktop">Queue file</span></div>');
 }
 buf.push('<div style="background: rgb(0, 214, 255); width: 0%;" class="progressBar border rad_small hidden padding_small"></div></div></div>');
+if ( model.type == 'application/pdf' || model.type == 'video/avi')
+{
+buf.push('<div class="flex x_center padding_medium"><embed');
+buf.push(attrs({ 'width':('350px'), 'height':('450px'), 'name':('plugin'), 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"width":true,"height":true,"name":true,"src":true,"type":true}));
+buf.push('></embed></div>');
+}
+if ( model.type == 'video/mp4')
+{
+buf.push('<div class="flex x_center padding_medium"><video controls="" name="media"><source');
+buf.push(attrs({ 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"src":true,"type":true}));
+buf.push('/></video></div>');
+}
+if ( model.type == 'audio/mp3')
+{
+buf.push('<div class="flex x_center padding_medium"><audio controls="" name="media"><source');
+buf.push(attrs({ 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"src":true,"type":true}));
+buf.push('/></audio></div>');
+}
+if ( model.type == 'image/jpeg')
+{
+buf.push('<div class="flex x_center padding_medium"><img');
+buf.push(attrs({ 'width':('60%'), 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + '') }, {"width":true,"src":true}));
+buf.push('/></div>');
+}
 }
 return buf.join("");
 };
@@ -690,7 +714,6 @@ exports.init = function(app) {
       this.listenTo(this.model, 'destroy', this._remove);
 
       this.sockets();
-      this.getIp();
 
       this.fakeInputFile = document.createElement('input');
       this.fakeInputFile.setAttribute('type', 'file');
@@ -776,14 +799,6 @@ exports.init = function(app) {
       if (this.timer) {
         clearInterval(this.timer.remainingInterval);
       }
-    },
-
-    getIp: function(argument) {
-      var self = this,
-          url  = 'http://smart-ip.net/geoip-json?callback=?';
-      Backbone.$.getJSON(url, function(data) {
-        self.clientIp = data;
-      });
     },
 
     uploadFiles: function() {

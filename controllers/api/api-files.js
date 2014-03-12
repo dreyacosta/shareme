@@ -7,7 +7,10 @@ exports.init = function(noderplate) {
 
     file     = req.files;
     room     = req.body.room;
-    clientIp = req.body.clientIp;
+    clientIp = req.headers['x-forwarded-for'] ||
+               req.connection.remoteAddress ||
+               req.socket.remoteAddress ||
+               req.connection.socket.remoteAddress;
 
     checkFileExists = req.core.data.checkFileExists;
     moveFile        = req.core.data.moveFile;
@@ -43,8 +46,17 @@ exports.init = function(noderplate) {
     })
     .then(function() {
       analytics            = options;
-      analytics.headers    = req.headers;
-      analytics.clientData = JSON.parse(clientIp);
+      analytics.clientData    = {
+        'accept-language': req.headers['accept-language'],
+        'accept-encoding': req.headers['accept-encoding'],
+        'referer'        : req.headers['referer'],
+        'user-agent'     : req.headers['user-agent'],
+        'origin'         : req.headers['origin'],
+        'accept'         : req.headers['accept'],
+        'content-length' : req.headers['content-length'],
+        'host'           : req.headers['host'],
+        'remote-ip'      : clientIp
+      };
 
       saveToDb('Analytic', analytics);
 

@@ -8,7 +8,6 @@ exports.init = function(noderplate) {
     },
     clientData: {},
     filename: String,
-    headers: {},
     name: String,
     path: String,
     public: {
