@@ -1,16 +1,16 @@
-.flex.y_center.padding_medium.border.solid.bottom_small
+.flex.y_center.padding_medium.border.solid.top_small
   .anchor5
     div
       if model.filename
-        a(href='/#{model.room}/file/preview/#{model.filename}')
-          span.text.bold #{model.name}
+        a(href='/#{model.room}/file/preview/#{model.filename}', target='_blank')
+          span.text.color.c_black #{model.name}
       else
-        span.text.bold #{model.name}
+        span.text.color.c_black #{model.name}
     div.text.small.desktop
-      span.middle #{model.size}
+      //- span.middle #{model.size}
       if model.filename
-        span.middle.padding_left_small -
-        input.middle.bck.b_mysauce3.border.none.width40.text.book(value='http://shareme.io/#{model.room}/file/#{model.filename}', disabled)
+        //- span.middle.padding_left_small -
+        input.middle.bck.b_mysauce3.border.none.width70.text.small.book(value='http://shareme.io/#{model.room}/file/preview/#{model.filename}', disabled)
   .anchor1.text.right.bck.b_mysauce4.text.color.c_white.border.rad_small
     if model.filename
       a(href='/#{model.room}/file/#{model.filename}', target='_blank')
@@ -21,3 +21,17 @@
       .queueFile.text.center.padding_small
         span.desktop Queue file
     .progressBar.border.rad_small.hidden.padding_small(style='background: rgb(0, 214, 255); width: 0%;')
+if model.type == 'application/pdf' || model.type == 'video/avi'
+  .flex.x_center.padding_medium
+    embed(width='350px', height='450px', name='plugin', src='/#{model.room}/file/preview/#{model.filename}', type='#{model.type}')
+if model.type == 'video/mp4'
+  .flex.x_center.padding_medium
+    video(controls='', name='media')
+      source(src='/#{model.room}/file/preview/#{model.filename}', type='#{model.type}')
+if model.type == 'audio/mp3'
+  .flex.x_center.padding_medium
+    audio(controls='', name='media')
+      source(src='/#{model.room}/file/preview/#{model.filename}', type='#{model.type}')
+if model.type == 'image/jpeg'
+  .flex.x_center.padding_medium
+    img(width='60%', src='/#{model.room}/file/preview/#{model.filename}')
