@@ -26,7 +26,6 @@ exports.init = function(app) {
       this.listenTo(this.model, 'destroy', this._remove);
 
       this.sockets();
-      this.getIp();
 
       this.fakeInputFile = document.createElement('input');
       this.fakeInputFile.setAttribute('type', 'file');
@@ -112,14 +111,6 @@ exports.init = function(app) {
       if (this.timer) {
         clearInterval(this.timer.remainingInterval);
       }
-    },
-
-    getIp: function(argument) {
-      var self = this,
-          url  = 'http://smart-ip.net/geoip-json?callback=?';
-      Backbone.$.getJSON(url, function(data) {
-        self.clientIp = data;
-      });
     },
 
     uploadFiles: function() {
