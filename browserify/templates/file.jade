@@ -34,4 +34,5 @@ if model.type == 'audio/mp3'
       source(src='/#{model.room}/file/preview/#{model.filename}', type='#{model.type}')
 if model.type == 'image/jpeg' || model.type == 'image/png'
   .flex.x_center.padding_left_medium.padding_right_medium.padding_bottom_medium
-    img.border.rad_small(width='60%', src='/#{model.room}/file/preview/#{model.filename}')
+    a.text.center(href='/#{model.room}/file/preview/#{model.filename}', target='_blank')
+      img.border.rad_small(width='60%', src='/#{model.room}/file/preview/#{model.filename}')

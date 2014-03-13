@@ -258,9 +258,11 @@ buf.push('/></audio></div>');
 }
 if ( model.type == 'image/jpeg' || model.type == 'image/png')
 {
-buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><img');
+buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><a');
+buf.push(attrs({ 'href':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'target':('_blank'), "class": ('text') + ' ' + ('center') }, {"href":true,"target":true}));
+buf.push('><img');
 buf.push(attrs({ 'width':('60%'), 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), "class": ('border') + ' ' + ('rad_small') }, {"width":true,"src":true}));
-buf.push('/></div>');
+buf.push('/></a></div>');
 }
 }
 return buf.join("");
