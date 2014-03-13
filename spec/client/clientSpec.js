@@ -208,58 +208,58 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="flex y_center padding_medium border solid top_small"><div class="anchor5"><div>');
+buf.push('<div class="flex y_center padding_medium"><div class="anchor5"><div>');
 if ( model.filename)
 {
 buf.push('<a');
-buf.push(attrs({ 'href':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'target':('_blank') }, {"href":true,"target":true}));
-buf.push('><span class="text color c_black">' + escape((interp = model.name) == null ? '' : interp) + '</span></a>');
+buf.push(attrs({ 'href':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'target':('_blank'), "class": ('text') + ' ' + ('color') + ' ' + ('c_mysauce2') }, {"href":true,"target":true}));
+buf.push('><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></a>');
 }
 else
 {
-buf.push('<span class="text color c_black">' + escape((interp = model.name) == null ? '' : interp) + '</span>');
+buf.push('<span class="text color c_mysauce2">' + escape((interp = model.name) == null ? '' : interp) + '</span>');
 }
 buf.push('</div><div class="text small desktop">');
 if ( model.filename)
 {
 buf.push('<input');
-buf.push(attrs({ 'value':('http://shareme.io/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'disabled':(true), "class": ('middle') + ' ' + ('bck') + ' ' + ('b_mysauce3') + ' ' + ('border') + ' ' + ('none') + ' ' + ('width70') + ' ' + ('text') + ' ' + ('small') + ' ' + ('book') }, {"value":true,"disabled":true}));
+buf.push(attrs({ 'value':('http://shareme.io/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'disabled':(true), "class": ('middle') + ' ' + ('border') + ' ' + ('none') + ' ' + ('width70') + ' ' + ('text') + ' ' + ('small') + ' ' + ('book') }, {"value":true,"disabled":true}));
 buf.push('/>');
 }
-buf.push('</div></div><div class="anchor1 text right bck b_mysauce4 text color c_white border rad_small">');
+buf.push('</div></div><div class="anchor1 text right border rad_small">');
 if ( model.filename)
 {
 buf.push('<a');
-buf.push(attrs({ 'href':('/' + (model.room) + '/file/' + (model.filename) + ''), 'target':('_blank') }, {"href":true,"target":true}));
-buf.push('><div class="downloadLink text center padding_small"><span class="fa fa-download"></span><span class="padding_left_small desktop">Download</span></div></a>');
+buf.push(attrs({ 'href':('/' + (model.room) + '/file/' + (model.filename) + ''), 'target':('_blank'), "class": ('text') + ' ' + ('color') + ' ' + ('c_mysauce2') }, {"href":true,"target":true}));
+buf.push('><div class="downloadLink text right padding_small"><span class="fa fa-download"></span><span class="padding_left_small desktop">Download</span></div></a>');
 }
 else
 {
-buf.push('<div class="queueFile text center padding_small"><span class="desktop">Queue file</span></div>');
+buf.push('<div class="queueFile text right padding_small"><span class="desktop">Queue file</span></div>');
 }
-buf.push('<div style="background: rgb(0, 214, 255); width: 0%;" class="progressBar border rad_small hidden padding_small"></div></div></div>');
+buf.push('<div style="background: rgb(225, 246, 250); width: 0%;" class="progressBar border rad_small hidden padding_small"></div></div></div>');
 if ( model.type == 'application/pdf' || model.type == 'video/avi')
 {
-buf.push('<div class="flex x_center padding_medium"><embed');
+buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><embed');
 buf.push(attrs({ 'width':('350px'), 'height':('450px'), 'name':('plugin'), 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"width":true,"height":true,"name":true,"src":true,"type":true}));
 buf.push('></embed></div>');
 }
 if ( model.type == 'video/mp4')
 {
-buf.push('<div class="flex x_center padding_medium"><video controls="" name="media"><source');
+buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><video controls="" name="media"><source');
 buf.push(attrs({ 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"src":true,"type":true}));
 buf.push('/></video></div>');
 }
 if ( model.type == 'audio/mp3')
 {
-buf.push('<div class="flex x_center padding_medium"><audio controls="" name="media"><source');
+buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><audio controls="" name="media"><source');
 buf.push(attrs({ 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"src":true,"type":true}));
 buf.push('/></audio></div>');
 }
-if ( model.type == 'image/jpeg')
+if ( model.type == 'image/jpeg' || model.type == 'image/png')
 {
-buf.push('<div class="flex x_center padding_medium"><img');
-buf.push(attrs({ 'width':('60%'), 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + '') }, {"width":true,"src":true}));
+buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><img');
+buf.push(attrs({ 'width':('60%'), 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), "class": ('border') + ' ' + ('rad_small') }, {"width":true,"src":true}));
 buf.push('/></div>');
 }
 }
@@ -481,9 +481,9 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="flex"><div class="joinRoom anchor2 text center color c_white"><input type="text" placeholder="Room code" class="anchor border none padding_medium"/></div><div class="connectRoom anchor1 flex x_center y_center bck b_mysauce1_dark padding_medium text center color c_white cursor pointer"><span class="fa fa-sign-in padding_right_small"></span><span>Connect</span></div><div class="room anchor3 bck b_white padding_medium text bold center hidden"><span class="fa fa-lock padding_right_small"></span><span><a');
+buf.push('<div class="flex bck b_mysauce3_light"><div class="joinRoom anchor2 text center color c_white"><input type="text" placeholder="Room code" class="anchor border none padding_medium"/></div><div class="connectRoom anchor1 flex x_center y_center padding_medium text center color c_blue cursor pointer border solid left_small"><span class="fa fa-sign-in padding_right_small"></span><span>Connect</span></div><div class="room anchor3 bck b_white padding_medium text bold center hidden"><span class="fa fa-lock padding_right_small"></span><span><a');
 buf.push(attrs({ 'href':('http://shareme.io/' + (model.room) + '') }, {"href":true}));
-buf.push('>' + escape((interp = model.room) == null ? '' : interp) + '</a></span></div><div class="connections anchor2 bck b_green padding_medium text center color c_white hidden"><span class="fa fa-user padding_right_small"></span><span>' + escape((interp = model.connections) == null ? '' : interp) + '</span></div><div class="timer anchor3 bck b_red padding_medium text center color c_white hidden"><span class="fa fa-clock-o padding_right_small"></span><span>' + escape((interp = model.timeRemaining) == null ? '' : interp) + '</span></div><div class="uploadFiles anchor1 bck b_mysauce1_dark padding_medium text center color c_white cursor pointer hidden"><span class="fa fa-cloud-upload"></span><span class="padding_left_small desktop">Upload</span></div></div>');
+buf.push('>' + escape((interp = model.room) == null ? '' : interp) + '</a></span></div><div class="connections anchor2 bck padding_medium text center color c_green hidden"><span class="fa fa-user padding_right_small"></span><span>' + escape((interp = model.connections) == null ? '' : interp) + '</span></div><div class="timer anchor3 bck padding_medium text center color c_red hidden"><span class="fa fa-clock-o padding_right_small"></span><span>' + escape((interp = model.timeRemaining) == null ? '' : interp) + '</span></div><div class="uploadFiles anchor1 bck padding_medium text center color c_blue cursor pointer hidden"><span class="fa fa-cloud-upload"></span><span class="padding_left_small desktop">Upload</span></div></div>');
 }
 return buf.join("");
 };
@@ -571,6 +571,8 @@ exports.init = function(app) {
   return Backbone.View.extend({
     template: templates.file,
 
+    className: 'border solid bottom_small',
+
     events: {
       'click input': 'linkSelect'
     },
@@ -584,6 +586,7 @@ exports.init = function(app) {
     selectors: function() {
       this.__downloadLink = this.el.querySelector('.downloadLink');
       this.__queueFile = this.el.querySelector('.queueFile');
+      this.__anchor1 = this.el.querySelector('.anchor1');
       this.__progressBar  = this.el.querySelector('.progressBar');
     },
 
@@ -603,6 +606,7 @@ exports.init = function(app) {
       }
 
       this.__progressBar.classList.remove('hidden');
+      this.__anchor1.style.background = 'rgb(247, 250, 250)';
 
       this.__progressBar.innerHTML = percentComplete + '%';
       this.__progressBar.style.width = percentComplete + '%';

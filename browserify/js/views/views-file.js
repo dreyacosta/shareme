@@ -6,6 +6,8 @@ exports.init = function(app) {
   return Backbone.View.extend({
     template: templates.file,
 
+    className: 'border solid bottom_small',
+
     events: {
       'click input': 'linkSelect'
     },
@@ -19,6 +21,7 @@ exports.init = function(app) {
     selectors: function() {
       this.__downloadLink = this.el.querySelector('.downloadLink');
       this.__queueFile = this.el.querySelector('.queueFile');
+      this.__anchor1 = this.el.querySelector('.anchor1');
       this.__progressBar  = this.el.querySelector('.progressBar');
     },
 
@@ -38,6 +41,7 @@ exports.init = function(app) {
       }
 
       this.__progressBar.classList.remove('hidden');
+      this.__anchor1.style.background = 'rgb(247, 250, 250)';
 
       this.__progressBar.innerHTML = percentComplete + '%';
       this.__progressBar.style.width = percentComplete + '%';

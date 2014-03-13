@@ -1,5 +1,20 @@
 var app        = require('./app'),
-    shareFiles = document.querySelector('.shareFiles');
+    lastScroll = 0,
+    shareFiles = document.querySelector('.shareFiles'),
+    container  = document.querySelector('.container'),
+    header     = document.querySelector('header');
+
+container.addEventListener('scroll', function(e) {
+  if (e.target.scrollTop < lastScroll) {
+    lastScroll = e.target.scrollTop;
+    return header.style.height = '50px';
+  }
+
+  if (e.target.scrollTop > 0 && e.target.scrollTop > lastScroll) {
+    lastScroll = e.target.scrollTop;
+    return header.style.height = '0px';
+  }
+});
 
 app.socket.on('file:uploaded', function(data) {
   var filesNumber = shareFiles.innerHTML;
