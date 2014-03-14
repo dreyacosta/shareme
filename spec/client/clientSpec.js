@@ -256,7 +256,7 @@ buf.push('<div class="flex x_center padding_left_medium padding_right_medium pad
 buf.push(attrs({ 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"src":true,"type":true}));
 buf.push('/></audio></div>');
 }
-if ( model.type == 'image/jpeg' || model.type == 'image/png')
+if ( model.type == 'image/jpeg' || model.type == 'image/png' || model.type == 'image/gif')
 {
 buf.push('<div style="width: 60%;" class="flex x_center text center padding_left_medium padding_right_medium padding_bottom_medium"><a');
 buf.push(attrs({ 'href':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'target':('_blank'), "class": ('text') + ' ' + ('center') }, {"href":true,"target":true}));

@@ -32,7 +32,7 @@ if model.type == 'audio/mp3'
   .flex.x_center.padding_left_medium.padding_right_medium.padding_bottom_medium
     audio(controls='', name='media')
       source(src='/#{model.room}/file/preview/#{model.filename}', type='#{model.type}')
-if model.type == 'image/jpeg' || model.type == 'image/png'
+if model.type == 'image/jpeg' || model.type == 'image/png' || model.type == 'image/gif'
   .flex.x_center.text.center.padding_left_medium.padding_right_medium.padding_bottom_medium(style='width: 60%;')
     a.text.center(href='/#{model.room}/file/preview/#{model.filename}', target='_blank')
       img.border.rad_small(src='/#{model.room}/file/preview/#{model.filename}')
