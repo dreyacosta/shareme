@@ -10,7 +10,7 @@
       //- span.middle #{model.size}
       if model.filename
         //- span.middle.padding_left_small -
-        input.middle.border.none.width70.text.small.book(value='http://shareme.io/#{model.room}/file/preview/#{model.filename}', disabled)
+        input.middle.border.none.width70.text.small.book(value='http://shareme.io/#{model.room}/file/preview/#{model.filename}', style='background: transparent;', disabled)
   .anchor1.text.right.border.rad_small
     if model.filename
       a.text.color.c_mysauce2(href='/#{model.room}/file/#{model.filename}', target='_blank')
@@ -33,6 +33,6 @@ if model.type == 'audio/mp3'
     audio(controls='', name='media')
       source(src='/#{model.room}/file/preview/#{model.filename}', type='#{model.type}')
 if model.type == 'image/jpeg' || model.type == 'image/png'
-  .flex.x_center.padding_left_medium.padding_right_medium.padding_bottom_medium
+  .flex.x_center.text.center.padding_left_medium.padding_right_medium.padding_bottom_medium(style='width: 60%;')
     a.text.center(href='/#{model.room}/file/preview/#{model.filename}', target='_blank')
-      img.border.rad_small(width='60%', src='/#{model.room}/file/preview/#{model.filename}')
+      img.border.rad_small(src='/#{model.room}/file/preview/#{model.filename}')

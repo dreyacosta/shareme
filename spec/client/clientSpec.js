@@ -223,7 +223,7 @@ buf.push('</div><div class="text small desktop">');
 if ( model.filename)
 {
 buf.push('<input');
-buf.push(attrs({ 'value':('http://shareme.io/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'disabled':(true), "class": ('middle') + ' ' + ('border') + ' ' + ('none') + ' ' + ('width70') + ' ' + ('text') + ' ' + ('small') + ' ' + ('book') }, {"value":true,"disabled":true}));
+buf.push(attrs({ 'value':('http://shareme.io/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'style':('background: transparent;'), 'disabled':(true), "class": ('middle') + ' ' + ('border') + ' ' + ('none') + ' ' + ('width70') + ' ' + ('text') + ' ' + ('small') + ' ' + ('book') }, {"value":true,"style":true,"disabled":true}));
 buf.push('/>');
 }
 buf.push('</div></div><div class="anchor1 text right border rad_small">');
@@ -258,10 +258,10 @@ buf.push('/></audio></div>');
 }
 if ( model.type == 'image/jpeg' || model.type == 'image/png')
 {
-buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><a');
+buf.push('<div style="width: 60%;" class="flex x_center text center padding_left_medium padding_right_medium padding_bottom_medium"><a');
 buf.push(attrs({ 'href':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'target':('_blank'), "class": ('text') + ' ' + ('center') }, {"href":true,"target":true}));
 buf.push('><img');
-buf.push(attrs({ 'width':('60%'), 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), "class": ('border') + ' ' + ('rad_small') }, {"width":true,"src":true}));
+buf.push(attrs({ 'src':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), "class": ('border') + ' ' + ('rad_small') }, {"src":true}));
 buf.push('/></a></div>');
 }
 }
@@ -483,9 +483,9 @@ attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow |
 var buf = [];
 with (locals || {}) {
 var interp;
-buf.push('<div class="flex bck b_mysauce3_light"><div class="joinRoom anchor2 text center color c_white"><input type="text" placeholder="Room code" class="anchor border none padding_medium"/></div><div class="connectRoom anchor1 flex x_center y_center padding_medium text center color c_blue cursor pointer border solid left_small"><span class="fa fa-sign-in padding_right_small"></span><span>Connect</span></div><div class="room anchor3 bck b_white padding_medium text bold center hidden"><span class="fa fa-lock padding_right_small"></span><span><a');
+buf.push('<div class="flex bck b_mysauce3_light"><div class="joinRoom anchor2 text center color c_white"><input type="text" placeholder="Room code" class="anchor border none padding_medium"/></div><div class="connectRoom anchor1 flex x_center y_center padding_medium text center color c_blue cursor pointer border solid left_small"><span class="fa fa-sign-in padding_right_small"></span><span>Connect</span></div><div class="room bck b_white padding_medium text bold center hidden"><span class="fa fa-lock padding_right_small"></span><span><a');
 buf.push(attrs({ 'href':('http://shareme.io/' + (model.room) + '') }, {"href":true}));
-buf.push('>' + escape((interp = model.room) == null ? '' : interp) + '</a></span></div><div class="connections anchor2 bck padding_medium text center color c_green hidden"><span class="fa fa-user padding_right_small"></span><span>' + escape((interp = model.connections) == null ? '' : interp) + '</span></div><div class="timer anchor3 bck padding_medium text center color c_red hidden"><span class="fa fa-clock-o padding_right_small"></span><span>' + escape((interp = model.timeRemaining) == null ? '' : interp) + '</span></div><div class="uploadFiles anchor1 bck padding_medium text center color c_blue cursor pointer hidden"><span class="fa fa-cloud-upload"></span><span class="padding_left_small desktop">Upload</span></div></div>');
+buf.push('>' + escape((interp = model.room) == null ? '' : interp) + '</a></span></div><div class="connections bck padding_medium text center color c_green hidden"><span class="fa fa-user padding_right_small"></span><span>' + escape((interp = model.connections) == null ? '' : interp) + '</span></div><div class="timer bck padding_medium text center color c_red hidden"><span class="fa fa-clock-o padding_right_small"></span><span>' + escape((interp = model.timeRemaining) == null ? '' : interp) + '</span></div><div class="uploadFiles bck padding_medium text center color c_blue cursor pointer hidden"><span class="fa fa-cloud-upload"></span><span class="padding_left_small desktop">Upload</span></div></div>');
 }
 return buf.join("");
 };
