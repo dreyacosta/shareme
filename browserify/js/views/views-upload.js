@@ -128,8 +128,7 @@ exports.init = function(app) {
               files    : file,
               name     : file.name,
               size     : file.size,
-              room     : modelRoom,
-              clientIp : JSON.stringify(this.clientIp)
+              room     : modelRoom
             });
             fileView.uploadFile();
           }
