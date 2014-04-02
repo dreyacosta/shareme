@@ -91,6 +91,7 @@ module.exports = function(grunt) {
           define: true,
           describe: true,
           beforeEach: true,
+          afterEach: true,
           expect: true,
           it: true,
           spyOn: true
