@@ -8,7 +8,6 @@ exports.init = function(noderplate) {
     },
     filename: String,
     name: String,
-    path: String,
     public: {
       type: Boolean,
       default: true
