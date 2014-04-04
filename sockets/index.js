@@ -55,6 +55,13 @@ exports.init = function(noderplate) {
     }
   };
 
+  noderplate.io.configure(function (){
+    noderplate.io.set('authorization', function (handshakeData, callback) {
+      handshakeData.core = noderplate.app.core;
+      callback(null, true);
+    });
+  });
+
   sockets.on('connection', function(socket) {
 
     socket.on('disconnect', function() {
@@ -64,7 +71,7 @@ exports.init = function(noderplate) {
     socket.on('room', function(data) {
       leaveRooms(socket);
 
-      noderplate.app.core.rooms.get({room: data})
+      noderplate.app.core.data.query('Room', 'findOne', {room: data})
       .then(function(response) {
         if (response) {
           socket.join(response.room);
@@ -79,7 +86,7 @@ exports.init = function(noderplate) {
 
           sockets.in(response.room).emit('room:info', roomData);
 
-          noderplate.app.core.files.getUserFiles({ room : data })
+          noderplate.app.core.data.query('File', 'find', { room : data })
           .then(function(files) {
             for (var idx in files) {
               var file = files[idx];
