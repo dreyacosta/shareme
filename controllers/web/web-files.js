@@ -16,8 +16,8 @@ exports.init = function(noderplate) {
 
     filePath = roomFilesPath + filter.room + '/' + filter.filename;
 
-    query('File', 'findOne', filter).then(function(file) {
-      file = file;
+    query('File', 'findOne', filter).then(function(data) {
+      file = data;
 
       return exists(filePath);
     }).then(function(exists) {
