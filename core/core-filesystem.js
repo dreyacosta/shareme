@@ -37,6 +37,10 @@ exports.init = function(noderplate) {
     return dfd.promise;
   };
 
+  filesystem.copy = function(target, source) {
+    fs.writeFileSync(target, fs.readFileSync(source));
+  };
+
   filesystem.rename = function(originalPath, newPath) {
     var dfd = Q.defer();
 
