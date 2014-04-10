@@ -9,14 +9,27 @@ exports.init = function(noderplate) {
     query  = req.core.data.query;
     exists = req.core.filesystem.exists;
 
-    filter = {
-      room: req.params.room,
-      filename: req.params.filename
-    };
+    var collection;
 
-    filePath = roomFilesPath + filter.room + '/' + filter.filename;
+    if (req.params.username) {
+      collection = 'UserFile';
+      filter = {
+        username: req.params.username,
+        filename: req.params.filename
+      };
+      filePath = './users/' + filter.username + '/' + filter.filename;
+    }
 
-    query('File', 'findOne', filter).then(function(data) {
+    if (req.params.room) {
+      collection = 'File';
+      filter = {
+        room: req.params.room,
+        filename: req.params.filename
+      };
+      filePath = roomFilesPath + filter.room + '/' + filter.filename;
+    }
+
+    query(collection, 'findOne', filter).then(function(data) {
       file = data;
 
       return exists(filePath);
@@ -29,7 +42,14 @@ exports.init = function(noderplate) {
           analytic.save();
         });
 
-        route = '/:room/file/preview/:filename';
+        if (req.params.username) {
+          route = '/profile/:username/file/preview/:filename';
+        }
+
+        if (req.params.room) {
+          route = '/:room/file/preview/:filename';
+        }
+
         regex = new RegExp('image|pdf|audio|video|text\/plain','gi');
 
         if (req.route.path === route && regex.test(file.type)) {
@@ -39,6 +59,7 @@ exports.init = function(noderplate) {
         return res.download(filePath);
       }
     }).fail(function(err) {
+      console.log(err);
       return res.render('filenotfound', {});
     });
   };
