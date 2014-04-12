@@ -1,0 +1,14 @@
+.flex.bck.b_mysauce3_light
+  .room.bck.b_white.padding_medium.text.bold.center
+    span.fa.fa-lock.padding_right_small
+    span
+      a(href='http://shareme.io/#{model.room}') #{model.room}
+  .connections.bck.padding_medium.text.center.color.c_green
+    span.fa.fa-user.padding_right_small
+    span #{model.connections}
+  .timer.bck.padding_medium.text.center.color.c_red
+    span.fa.fa-clock-o.padding_right_small
+    span #{model.timeRemaining}
+  .uploadFiles.bck.padding_medium.text.center.color.c_blue.cursor.pointer
+    span.fa.fa-cloud-upload
+    span.padding_left_small.desktop Upload
