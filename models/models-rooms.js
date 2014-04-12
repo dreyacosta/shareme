@@ -2,11 +2,13 @@ exports.init = function(noderplate) {
   var mongoose = noderplate.imports.mongoose;
 
   var roomSchema = mongoose.Schema({
-    room: String,
+    connections: Number,
     creationDate: {
       type: Date,
       default: Date.now
-    }
+    },
+    room: String,
+    timeRemaining: String
   });
 
   var Room = mongoose.model('room', roomSchema);
