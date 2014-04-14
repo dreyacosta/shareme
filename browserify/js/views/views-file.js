@@ -3,17 +3,18 @@ exports.init = function(app) {
       socket    = app.socket,
       Backbone  = app.imports.Backbone;
 
-  return Backbone.View.extend({
+  return app.utils.BaseView.extend({
     template: templates.file,
 
     className: 'border solid bottom_small',
 
     events: {
-      'click input': 'linkSelect'
+      'click input'     : 'linkSelect',
+      'click .saveFile' : 'saveFile'
     },
 
     initialize: function() {
-      this.listenTo(this.model, 'change', this.render);
+      this.listenTo(this.model, 'change:filename', this.render);
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(this.model, 'progress', this.progress);
     },
@@ -47,20 +48,8 @@ exports.init = function(app) {
       this.__progressBar.style.width = percentComplete + '%';
     },
 
-    uploadFile: function() {
-      this.model.save({}, {
-        success: function(model) {
-          socket.emit('file:create', model);
-        }
-      });
-    },
-
-    render: function() {
-      this.el.innerHTML = this.template({
-        model: this.model.toJSON()
-      });
+    onRender: function() {
       this.selectors();
-      return this;
     }
   });
 };
