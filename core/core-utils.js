@@ -80,6 +80,10 @@ exports.init = function(noderplate) {
 
       self.timeRemaining = minutes + ':' + seconds;
 
+      roomData.timeRemaining = self.timeRemaining;
+
+      sockets.in(roomData.room).emit('room', roomData);
+
       if (self.timeRemaining === '89:31') {
         clearInterval(self.remainingInterval);
         model.File.find({room: roomData.room}, function(err, files) {
