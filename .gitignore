@@ -3,5 +3,6 @@ browserify/js/templates
 browserify/js/config.js
 config/config-main.js
 files
+users
 node_modules
 public
