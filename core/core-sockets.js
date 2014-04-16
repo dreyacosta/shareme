@@ -38,7 +38,7 @@ exports.init = function(noderplate) {
 
   sockets.init = function(socket) {
     var setRoute = function(key, callback) {
-      socket.on(key, function(data) {
+      socket.on(key, function(data, cb) {
         var req = {};
 
         req.io = noderplate.io;
@@ -46,6 +46,7 @@ exports.init = function(noderplate) {
         req.socket = socket;
         req.session = socket.handshake.sessiondata;
         req.data = data;
+        req.callback = cb;
 
         callback(req);
       });
