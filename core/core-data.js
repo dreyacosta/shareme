@@ -23,7 +23,7 @@ exports.init = function(noderplate) {
       }
 
       if (!data) {
-        return dfd.reject(null);
+        return dfd.resolve(null);
       }
 
       return dfd.resolve(data);
