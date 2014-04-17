@@ -10,6 +10,7 @@ exports.init = function(noderplate) {
   });
 
   models.User     = require('./models-user').init(noderplate);
+  models.UserFile = require('./models-userfile').init(noderplate);
   models.File     = require('./models-file').init(noderplate);
   models.Room     = require('./models-rooms').init(noderplate);
   models.Analytic = require('./models-analytic').init(noderplate);
