@@ -3,37 +3,30 @@ extends header
 block content
   #upload.flex.x_center
 
-  if sharefiles < 2000
-    .container.anchor1.scroll
+  .container.anchor1.scroll
 
-      .flex.column
-        #files.site_width.anchor
-          .padding_big
-            h1.text.normal.color.c_mysauce2.center 90 minutes of free unlimited space
-            h1.text.normal.color.c_mysauce2.center.margin_bottom_big to upload your files into shared rooms.
+    .flex.column
+      #files.site_width.anchor
+        .padding_big
+          h1.text.normal.color.c_mysauce2.center 90 minutes of free unlimited space
+          h1.text.normal.color.c_mysauce2.center.margin_bottom_big to upload your files into shared rooms.
 
-            h4.margin_bottom_small 1. Create or Connect to a Room
-            p A room is a channel to share files with other people, you can create or share your room code with someone else
+          h4.margin_bottom_small 1. Create or Connect to a Room
+          p A room is a channel to share files with other people, you can create or share your room code with someone else
 
-            h4.margin_bottom_small 2. Once in a room, upload and download files
-            p Inside a room you can upload as many files as you want and of unlimited size. Anyone who has the code for your room can download the archives you upload
+          h4.margin_bottom_small 2. Once in a room, upload and download files
+          p Inside a room you can upload as many files as you want and of unlimited size. Anyone who has the code for your room can download the archives you upload
 
-            h4.margin_bottom_small 3. Rooms have a lifespan of 90 minutes
-            p The room lasts for only 90 minutes and after this time, all archives are automatically deleted
+          h4.margin_bottom_small 3. Rooms have a lifespan of 90 minutes
+          p The room lasts for only 90 minutes and after this time, all archives are automatically deleted
 
-    .anchor.text.small.center.padding_small.bck.b_mysauce3_light
-      a(href='https://github.com/dreyacosta/shareme')
-        span Open source project
-        span.fa.fa-github.padding_left_small.padding_right_small
-        span Source on GitHub
+  .anchor.text.small.center.padding_small.bck.b_mysauce3_light
+    a(href='https://github.com/dreyacosta/shareme')
+      span Open source project
+      span.fa.fa-github.padding_left_small.padding_right_small
+      span Source on GitHub
 
-    if env == 'dev'
-      script(src='/js/app.js')
-    if env == 'prod'
-      script(src='/js/app.min.js')
-  else
-    .anchor1.flex.column.y_center.x_center.scroll
-      h1.text.center The server is overload
-      h3.text.normal.center.margin_bottom_big
-        a(href='/')
-          span Try again later.
+  if env == 'dev'
+    script(src='/js/app.js')
+  if env == 'prod'
+    script(src='/js/app.min.js')

@@ -10,19 +10,23 @@ exports.init = function(noderplate) {
     if (!room) {
       return res.render('index', {
         title: 'Noderplate',
-        sharefiles: 0,
         env: noderplate.app.env
       });
     }
 
-    query('Room', 'findOne', {room: room}).then(function() {
+    query('Room', 'findOne', {room: room})
+
+    .then(function(data) {
+      if (!data) {
+        return res.render('roomnotfound', {});
+      }
       return res.render('index', {
         title: 'Noderplate',
-        sharefiles: 0,
         env: noderplate.app.env
       });
-    }).fail(function(err) {
-      return res.render('roomnotfound', {});
+    })
+    .fail(function(err) {
+      console.log(err);
     });
   };
 
