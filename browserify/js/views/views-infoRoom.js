@@ -7,7 +7,7 @@ exports.init = function(app) {
       active    = app.active,
       Backbone  = app.imports.Backbone;
 
-  return Backbone.View.extend({
+  return utils.BaseView.extend({
     template: templates.infoRoom,
 
     className: 'anchor \
@@ -24,8 +24,6 @@ exports.init = function(app) {
     initialize: function() {
       this.listenTo(this.model, 'change', this.render);
       this.listenTo(this.model, 'destroy', this._remove);
-
-      // this.sockets();
 
       this.fakeInputFile = document.createElement('input');
       this.fakeInputFile.setAttribute('type', 'file');
@@ -44,34 +42,18 @@ exports.init = function(app) {
           file = files[i];
 
           if (typeof file === 'object') {
-            fileView = this.newFile({
+            var fileModel = new app.models.File({
               files    : file,
               name     : file.name,
               size     : file.size,
               room     : modelRoom
             });
-            fileView.uploadFile();
+
+            app.files.add(fileModel);
+            fileModel.save({});
           }
         }
       }
-    },
-
-    newFile: function(file) {
-      var fileModel, fileView, filesRegion;
-
-      fileModel = new app.models.File(file);
-      fileView = new app.views.File({
-        model: fileModel
-      });
-
-      filesRegion = app.regions.files;
-
-      app.utils.prepend({
-        el: filesRegion,
-        render: fileView.render().el
-      });
-
-      return fileView;
     },
 
     clickFakeInput: function() {
@@ -82,160 +64,6 @@ exports.init = function(app) {
     _remove: function() {
       this.fakeInputFile.remove();
       this.remove();
-    },
-
-    // _removeIntervals: function() {
-    //   if (this.timerInterval !== undefined) {
-    //     clearInterval(this.timerInterval);
-    //     this.timerInterval = undefined;
-    //   }
-    //   if (this.timer) {
-    //     clearInterval(this.timer.remainingInterval);
-    //   }
-    // },
-
-    // remaining: function() {
-    //   var self          = this,
-    //       creationDate  = this.model.get('creationDate');
-
-    //   this.timer = new utils.TimeRemaining(creationDate, app.config.roomLifespan);
-
-    //   this.timerInterval = setInterval(function() {
-    //     var timer = self.timer,
-    //         model = self.model;
-
-    //     model.set('timeRemaining', timer.timeRemaining);
-
-    //     if (timer.timeRemaining === '00:01' || timer.timeElapsed === true) {
-    //       clearInterval(timer.remainingInterval);
-    //       clearInterval(self.timerInterval);
-
-    //       window.location.reload();
-    //     }
-    //   }, 1000);
-    // },
-
-    render: function() {
-      this.el.innerHTML = this.template({
-        model: this.model.toJSON()
-      });
-
-      // if (this.timerInterval === undefined) {
-      //   this.remaining();
-      // }
-
-      return this;
     }
-
-    // selectors: function() {
-    //   this.__joinRoom = this.el.querySelector('.joinRoom');
-    //   this.__connectRoom = this.el.querySelector('.connectRoom');
-    //   this.__room = this.el.querySelector('.room');
-    //   this.__connections = this.el.querySelector('.connections');
-    //   this.__timer = this.el.querySelector('.timer');
-    //   this.__uploadFiles = this.el.querySelector('.uploadFiles');
-    // },
-
-    // connectRoom: function(e) {
-    //   var room = e.currentTarget.value || this.el.querySelector('input').value;
-
-    //   socket.emit('room', room);
-    // },
-
-
-
-    // sockets: function() {
-    //   socket.on('create:file', this.newFile.bind(this));
-    //   socket.on('room:info', this.roomInfo.bind(this));
-    // },
-
-
-
-    // roomInfo: function(roomData) {
-    //   var modelRoom = this.model.get('room');
-
-    //   if (modelRoom === roomData.room) {
-    //     this.model.set({
-    //       room         : roomData.room,
-    //       creationDate : roomData.creationDate,
-    //       connections  : roomData.clients
-    //     });
-
-    //     return;
-    //   }
-
-    //   this.model.set({
-    //     room         : roomData.room,
-    //     creationDate : roomData.creationDate,
-    //     connections  : roomData.clients
-    //   });
-
-    //   app.active.mainRouter.navigate(this.model.get('room'));
-    // },
-
-    // _remove: function() {
-    //   this.fakeInputFile.remove();
-    //   this.remove();
-    // },
-
-    // _removeIntervals: function() {
-    //   if (this.timerInterval !== undefined) {
-    //     clearInterval(this.timerInterval);
-    //     this.timerInterval = undefined;
-    //   }
-    //   if (this.timer) {
-    //     clearInterval(this.timer.remainingInterval);
-    //   }
-    // },
-
-
-
-    // remaining: function() {
-    //   var self          = this,
-    //       creationDate  = this.model.get('creationDate');
-
-    //   this.timer = new utils.TimeRemaining(creationDate, app.config.roomLifespan);
-
-    //   this.timerInterval = setInterval(function() {
-    //     var timer = self.timer,
-    //         model = self.model;
-
-    //     model.set('timeRemaining', timer.timeRemaining);
-
-    //     if (timer.timeRemaining === '00:01' || timer.timeElapsed === true) {
-    //       clearInterval(timer.remainingInterval);
-    //       clearInterval(self.timerInterval);
-
-    //       window.location.reload();
-    //     }
-    //   }, 1000);
-    // },
-
-    // render: function() {
-    //   this.el.innerHTML = this.template({
-    //     model: this.model.toJSON()
-    //   });
-
-    //   this.selectors();
-
-    //   if (this.model.get('room') !== '') {
-    //     if (this.timerInterval === undefined) {
-    //       this.remaining();
-    //     }
-
-    //     this.__joinRoom.classList.add('hidden');
-    //     this.__connectRoom.classList.add('hidden');
-    //     this.__room.classList.remove('hidden');
-    //     this.__connections.classList.remove('hidden');
-    //     this.__timer.classList.remove('hidden');
-    //     this.__uploadFiles.classList.remove('hidden');
-
-    //     return this;
-    //   }
-
-    //   this._removeIntervals();
-
-    //   return this;
-    // }
   });
 };
