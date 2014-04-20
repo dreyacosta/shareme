@@ -1,0 +1,56 @@
+doctype html
+html(lang='es')
+  head
+    meta(charset="utf-8")
+
+    title Shareme.io
+
+    link(rel='shortcut icon', href='/ico/favicon.ico')
+
+    meta(name='description', content='Fast way to share all kind of files. 30 minutes of free unlimited space.')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+
+    meta(name='twitter:card', content='#{data.filename}')
+    meta(name='twitter:site', content='http://shareme.io')
+    meta(name='twitter:creator', content='http://shareme.io/#{data.room}')
+    meta(name='twitter:title', content='#{data.name}')
+    meta(name='twitter:image', content='http://shareme.io/#{data.room}/file/preview/#{data.filename}')
+
+    link(href='//fonts.googleapis.com/css?family=Montserrat+Alternates:400,700|Raleway:400,300,700', rel='stylesheet')
+    link(href='//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css', rel='stylesheet')
+    link(href='/css/xpressio.min.css', rel='stylesheet')
+
+  body.flex.column
+    header.flex.border.solid.bottom_small.bck.b_white(style='height: 50px;')
+      .site_width.flex.anchor1
+        .anchor2.flex.y_center
+          a(href='/')
+            .padding_medium.logo
+              span.text.color.c_mysauce1 share
+              span.text.bold.color.c_mysauce2 me
+
+        #menu.anchor3.flex.x_end
+
+    if data.type == 'application/pdf' || data.type == 'video/avi'
+      .flex.x_center.padding_left_medium.padding_right_medium.padding_bottom_medium
+        embed(width='350px', height='450px', name='plugin', src='/#{data.room}/file/preview/#{data.filename}', type='#{data.type}')
+    if data.type == 'video/mp4'
+      .flex.x_center.padding_left_medium.padding_right_medium.padding_bottom_medium
+        video(controls='', name='media')
+          source(src='/#{data.room}/file/preview/#{data.filename}', type='#{data.type}')
+    if data.type == 'audio/mp3'
+      .flex.x_center.padding_left_medium.padding_right_medium.padding_bottom_medium
+        audio(controls='', name='media')
+          source(src='/#{data.room}/file/preview/#{data.filename}', type='#{data.type}')
+    if data.type == 'image/jpeg' || data.type == 'image/png' || data.type == 'image/gif'
+      .anchor1.scroll.padding_big
+        a.text.center(href='/#{data.room}/file/preview/#{data.filename}', target='_blank')
+          img.border.rad_small(src='/#{data.room}/file/preview/#{data.filename}', style='width: 80%')
+
+    script.
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+      ga('create', 'UA-8068556-10', 'shareme.io');
+      ga('send', 'pageview');

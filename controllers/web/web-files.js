@@ -42,6 +42,8 @@ exports.init = function(noderplate) {
           analytic.save();
         });
 
+        var pageRoute = '/:room/file/page/preview/:filename';
+
         if (req.params.username) {
           route = '/profile/:username/file/preview/:filename';
         }
@@ -51,6 +53,11 @@ exports.init = function(noderplate) {
         }
 
         regex = new RegExp('image|pdf|audio|video|text\/plain','gi');
+
+        if (req.route.path === pageRoute) {
+          console.log('file', file);
+          return res.render('filepreview', {data: file});
+        }
 
         if (req.route.path === route && regex.test(file.type)) {
           return res.sendfile(filePath);
