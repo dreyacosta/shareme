@@ -33,12 +33,19 @@ if (process.argv[2] === 'simplemocha') {
 
 noderplate.config = require('./config/config-main')[noderplate.app.get('env')];
 
+// Session store
+noderplate.sessionStore = new noderplate.app.MongoStore({
+  url: 'mongodb://' +
+        noderplate.config.mongodb.host + '/' +
+        noderplate.config.mongodb.database
+});
+
 // Set up App modules
+noderplate.app.sockets     = require('./sockets').init(noderplate);
 noderplate.app.config      = require('./config').init(noderplate);
 noderplate.app.models      = require('./models').init(noderplate);
 noderplate.app.core        = require('./core').init(noderplate);
 noderplate.app.controllers = require('./controllers').init(noderplate);
 noderplate.app.routes      = require('./routes').init(noderplate);
-noderplate.app.sockets     = require('./sockets').init(noderplate);
 
 module.exports = noderplate;

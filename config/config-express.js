@@ -44,11 +44,7 @@ exports.init = function(noderplate) {
   app.use(express.cookieParser());
 
   app.use(express.session({
-    store: new MongoStore({
-      url: 'mongodb://' +
-            noderplate.config.mongodb.host + '/' +
-            noderplate.config.mongodb.database
-    }),
+    store: noderplate.sessionStore,
     cookie: {maxAge: noderplate.config.session.cookie.maxAge},
     secret: noderplate.config.session.secret
   }));
