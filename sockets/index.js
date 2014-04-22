@@ -1,13 +1,8 @@
 exports.init = function(noderplate) {
-  var sockets    = noderplate.io.sockets,
-      RedisStore = noderplate.imports.RedisStore,
-      redis      = noderplate.imports.redis,
-      pub        = redis.createClient(),
-      sub        = redis.createClient(),
-      client     = redis.createClient();
+  var sockets = {};
 
   var getSocketRooms = function(socket) {
-    var sockRooms      = sockets.manager.roomClients[socket.id],
+    var sockRooms      = noderplate.io.sockets.manager.roomClients[socket.id],
         roomsName      = Object.keys(sockRooms),
         formattedNames = [];
 
@@ -24,14 +19,6 @@ exports.init = function(noderplate) {
     return clients.length;
   };
 
-  noderplate.io.configure(function () {
-    noderplate.io.set('store', new RedisStore({
-      redisPub : pub,
-      redisSub : sub,
-      redisClient : client
-    }));
-  });
-
   var leaveRooms = function(socket) {
     var rooms, roomData, roomName, clients;
 
@@ -46,72 +33,61 @@ exports.init = function(noderplate) {
 
       roomData = {
         room: roomName,
-        clients: clients - 1
+        connections: clients - 1
       };
 
       if (roomData.room !== '') {
-        socket.in(rooms[1]).broadcast.emit('room:info', roomData);
+        socket.in(rooms[1]).broadcast.emit('room', roomData);
       }
     }
   };
 
-  noderplate.io.configure(function (){
-    noderplate.io.set('authorization', function (handshakeData, callback) {
-      handshakeData.core = noderplate.app.core;
-      callback(null, true);
+  sockets['disconnect'] = function(req) {
+    leaveRooms(req.socket);
+  };
+
+  sockets['room'] = function(req) {
+    var roomId, roomData, roomFiles, roomConnection;
+
+    leaveRooms(req.socket);
+
+    roomId = req.data.room;
+    roomConnection = getRoomClients(roomId);
+
+    req.socket.join(roomId);
+
+    req.core.data.query('Room', 'findOne', {room: roomId})
+
+    .then(function(data) {
+      if (!data) { return; }
+
+      data.connections = roomConnection;
+
+      req.io.sockets.in(data.room).emit('room', data);
+    })
+    .fail(function(err) {
+      console.log(err);
     });
-  });
+  };
 
-  sockets.on('connection', function(socket) {
+  sockets['files'] = function(req) {
+    var roomId, roomData, roomFiles;
 
-    socket.on('disconnect', function() {
-      leaveRooms(socket);
+    roomId = req.data.room;
+
+    req.socket.join(roomId);
+
+    req.core.data.query('File', 'find', {room: roomId})
+
+    .then(function(files) {
+      if (!files) { return; }
+
+      req.io.sockets.in(roomId).emit('files', files);
+    })
+    .fail(function(err) {
+      console.log(err);
     });
-
-    socket.on('room', function(data) {
-      leaveRooms(socket);
-
-      noderplate.app.core.data.query('Room', 'findOne', {room: data})
-      .then(function(response) {
-        if (response) {
-          socket.join(response.room);
-
-          var clients = getRoomClients(response.room);
-
-          var roomData = {
-            room: response.room,
-            creationDate: response.creationDate,
-            clients: clients - 1
-          };
-
-          sockets.in(response.room).emit('room:info', roomData);
-
-          noderplate.app.core.data.query('File', 'find', { room : data })
-          .then(function(files) {
-            for (var idx in files) {
-              var file = files[idx];
-
-              socket.in(roomData.room).emit('file:create', file);
-            }
-          })
-          .fail(function(err) {
-            console.log(err);
-          });
-        }
-      });
-    });
-
-    socket.on('file:create', function(data) {
-      var rooms = getSocketRooms(socket);
-
-      sockets.emit('file:uploaded', 1);
-
-      if (rooms[1]) {
-        socket.in(rooms[1]).broadcast.emit('file:create', data);
-      }
-    });
-
-  });
+  };
 
   return sockets;
 };
