@@ -6,6 +6,8 @@ exports.init = function(noderplate) {
   app.post('/api/upload/file', middlewares.fileAnalytics, api.files.upload);
   app.post('/api/create/room', api.rooms.create);
 
+  // app.post('/api/save/file', middlewares.requireLogin, api.files.save);
+
   // app.get('/api/users', middlewares.requireLogin, api.users.all);
 
   return;
