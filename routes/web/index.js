@@ -10,14 +10,14 @@ exports.init = function(noderplate) {
   app.get('/:room?', web.home.render);
   app.get('/:room/file/:filename', web.files.getFile);
   app.get('/:room/file/preview/:filename', web.files.getFile);
-  app.get('/:room/file/page/preview/:filename', web.files.getFile);
+  // app.get('/:room/file/page/preview/:filename', web.files.getFile);
 
-  app.get('/profile/:username?', middlewares.requireLogin, web.users.profile);
-  app.get('/profile/:username/file/preview/:filename', middlewares.requireLogin, web.files.getFile);
+  // app.get('/profile/:username?', middlewares.requireLogin, web.users.profile);
+  // app.get('/profile/:username/file/preview/:filename', middlewares.requireLogin, web.files.getFile);
 
-  app.get('/u/login', web.users.login);
-  app.get('/u/register', web.users.register);
-  app.get('/u/logout', web.users.logout);
+  // app.get('/u/login', web.users.login);
+  // app.get('/u/register', web.users.register);
+  // app.get('/u/logout', web.users.logout);
 
   return;
 };
