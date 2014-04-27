@@ -7,6 +7,9 @@ block content
 
     .flex.x_center.margin_top_medium
       .flex.column.bck.b_white.padding_medium.border.rad_small.width30
+        if status
+          div(class='#{status}')
+            span #{message}
         h3 Register
         form.flex.column(method='post', action='/register')
           input.border.solid.all_small.margin_bottom_small.padding_medium(type='text', name='username', placeholder='Username')
