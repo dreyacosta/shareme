@@ -55,6 +55,11 @@ exports.init = function(app) {
       }
 
       return Backbone.sync.call(this, method, model, options);
+    },
+
+    saveToMyProfile: function() {
+      this.url = '/file/savefile';
+      Backbone.Model.prototype.save.apply(this, arguments);
     }
   });
 };
