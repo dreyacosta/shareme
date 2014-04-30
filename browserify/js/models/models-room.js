@@ -3,6 +3,8 @@ exports.init = function(app) {
       $        = app.imports.$,
       Backbone = app.imports.Backbone;
 
+  app.active.roomModels = [];
+
   return Backbone.Model.extend({
     url: app.config.api.room,
 
@@ -12,5 +14,9 @@ exports.init = function(app) {
       timeRemaining : '90:00',
       creationDate  : new Date()
     },
+
+    initialize: function() {
+      app.active.roomModels.push(this);
+    }
   });
 };
