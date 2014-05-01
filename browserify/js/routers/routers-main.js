@@ -2,52 +2,81 @@ exports.init = function(app) {
   var socket    = app.socket,
       Backbone  = app.imports.Backbone;
 
-  var roomModel, uploadView, menuView;
-
-  app.active.roomModels = [];
-
   return Backbone.Router.extend({
     routes: {
-      ''      : 'homePage',
-      ':room' : 'roomPage'
+      ''                  : 'homePage',
+      ':room'             : 'roomPage',
+      'profile/:username' : 'profilePage'
     },
 
     initialize: function() {
       window.debug = app;
 
-      roomModel = new app.models.Room();
+      app.room = new app.models.Room();
+      app.files = new app.collections.Files();
+    },
 
-      app.active.roomModels.push(roomModel);
+    clean: function() {
+      app.active.fileModels = app.utils.cleanModels(app.active.fileModels);
 
-      uploadView = new app.views.Upload({
-        model : roomModel
-      });
+      if (app.uploadView) {
+        app.socket.emit('room', {room: ''});
+        app.uploadView.remove();
+      }
+    },
 
-      app.utils.prepend({
-        el     : app.regions.upload,
-        render : uploadView.render().el
-      });
+    homePage: function() {
+      this.clean();
 
-      menuView = new app.views.Menu({
-        model : roomModel
+      app.active.roomModels = app.utils.cleanModels(app.active.roomModels);
+
+      app.room = new app.models.Room();
+
+      app.menuView = new app.views.Menu({
+        model : app.room
       });
 
       app.utils.prepend({
         el     : app.regions.menu,
-        render : menuView.render().el
+        render : app.menuView.render().el
       });
-    },
 
-    homePage: function() {
-      app.active.fileModels = app.utils.cleanModels(app.active.fileModels);
-      roomModel.set({
-        room: ''
+      app.uploadView = new app.views.ConnectRoom({
+        model : app.room
       });
-      app.socket.emit('room', '');
+
+      app.utils.prepend({
+        el     : app.regions.upload,
+        render : app.uploadView.render().el
+      });
     },
 
     roomPage: function(room) {
-      app.socket.emit('room', room);
+      this.clean();
+
+      app.socket.emit('room', {room: room});
+      app.socket.emit('files', {room: room});
+
+      app.uploadView = new app.views.InfoRoom({
+        model : app.room
+      });
+
+      app.utils.prepend({
+        el     : app.regions.upload,
+        render : app.uploadView.render().el
+      });
+
+      app.filesView = new app.views.Files({
+        modelView: app.views.File,
+        collection: app.files
+      });
+
+      var filesRegion = app.regions.files;
+
+      app.utils.prepend({
+        el: filesRegion,
+        render: app.filesView.el
+      });
     }
   });
 };
