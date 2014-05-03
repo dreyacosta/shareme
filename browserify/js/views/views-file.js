@@ -17,6 +17,7 @@ exports.init = function(app) {
       this.listenTo(this.model, 'change:filename', this.render);
       this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(this.model, 'progress', this.progress);
+      this.listenTo(this.model, 'sync', this.syncfiles);
     },
 
     selectors: function() {
@@ -24,6 +25,10 @@ exports.init = function(app) {
       this.__queueFile = this.el.querySelector('.queueFile');
       this.__anchor1 = this.el.querySelector('.anchor1');
       this.__progressBar  = this.el.querySelector('.progressBar');
+    },
+
+    syncfiles: function() {
+      app.socket.emit('files', {room: this.model.get('room')});
     },
 
     linkSelect: function(e) {
