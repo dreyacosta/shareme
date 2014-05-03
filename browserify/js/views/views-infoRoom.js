@@ -43,10 +43,10 @@ exports.init = function(app) {
 
           if (typeof file === 'object') {
             var fileModel = new app.models.File({
-              files    : file,
-              name     : file.name,
-              size     : file.size,
-              room     : modelRoom
+              files : file,
+              name  : file.name,
+              size  : file.size,
+              room  : modelRoom
             });
 
             app.files.add(fileModel);
@@ -64,6 +64,12 @@ exports.init = function(app) {
     _remove: function() {
       this.fakeInputFile.remove();
       this.remove();
+    },
+
+    onRender: function() {
+      if (this.model.get('timeRemaining') === '00:01') {
+        window.location.reload();
+      }
     }
   });
 };
