@@ -54,8 +54,12 @@ describe("Sockets", function() {
     });
   });
 
-  describe("Testing sockets", function() {
+  xdescribe("Testing sockets", function() {
     var socket;
+
+    noderplate.io.sockets.on('connection', function(socket) {
+      noderplate.app.core.sockets.init(socket);
+    });
 
     beforeEach(function(done) {
       noderplate.io.set('log level', 1);
@@ -77,9 +81,9 @@ describe("Sockets", function() {
 
     it("should return room data", function(done) {
       socket.emit('room', room);
-      socket.emit('file:create', {title: 'Foo'});
+      // socket.emit('file:create', {title: 'Foo'});
 
-      socket.on('file:create', function(data) {
+      socket.on('room', function(data) {
         expect(data.room).to.equal(room);
         done();
       });
