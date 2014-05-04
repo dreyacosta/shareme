@@ -7,9 +7,9 @@ module.exports = {
     },
     session: {
       cookie: {
-        maxAge: 60000
+        maxAge: 6000
       },
-      secret: 'secretcode'
+      secret: 'secret'
     },
     mongodb: {
       host: 'localhost',
@@ -17,10 +17,13 @@ module.exports = {
     },
     sendmail: {
       service: 'Gmail',
-      user: 'youremail@gmail.com',
-      pass: 'yourpass'
+      user: 'yourmail@gmail.com',
+      bcc: 'bccmail@gmail.com',
+      pass: 'pass'
     },
-    roomLifespan: 90
+    roomLifespan: 90,
+    roomFilesPath: './files/',
+    userFilesPath: './users/'
   },
   production: {
     env: 'prod',
@@ -30,20 +33,23 @@ module.exports = {
     },
     session: {
       cookie: {
-        maxAge: 60000
+        maxAge: 6000
       },
-      secret: 'secretcode'
+      secret: 'secret'
     },
     mongodb: {
       host: 'localhost',
-      database: 'prodb'
+      database: 'shareme'
     },
     sendmail: {
       service: 'Gmail',
-      user: 'youremail@gmail.com',
-      pass: 'yourpass'
+      user: 'yourmail@gmail.com',
+      bcc: 'bccmail@gmail.com',
+      pass: 'pass'
     },
-    roomLifespan: 90
+    roomLifespan: 90,
+    roomFilesPath: './files/',
+    userFilesPath: './users/'
   },
   simplemocha: {
     env: 'test',
@@ -53,19 +59,22 @@ module.exports = {
     },
     session: {
       cookie: {
-        maxAge: 60000
+        maxAge: 6000
       },
-      secret: 'secretcode'
+      secret: 'secret'
     },
     mongodb: {
       host: 'localhost',
-      database: 'testing'
+      database: 'mocha'
     },
     sendmail: {
       service: 'Gmail',
-      user: 'youremail@gmail.com',
-      pass: 'yourpass'
+      user: 'yourmail@gmail.com',
+      bcc: 'bccmail@gmail.com',
+      pass: 'pass'
     },
-    roomLifespan: 90
+    roomLifespan: 90,
+    roomFilesPath: './files/',
+    userFilesPath: './users/'
   },
 };
