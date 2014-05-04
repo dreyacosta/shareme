@@ -29,20 +29,40 @@ app.regions = {
 
 app.templates = {
   file        : require('./templates/file'),
-  upload      : require('./templates/upload'),
+  connectRoom : require('./templates/connectRoom'),
+  infoRoom    : require('./templates/infoRoom'),
+  profileFile : require('./templates/profileFile'),
   profileName : require('./templates/profileName'),
   menu        : require('./templates/menu')
 };
 
-app.socket  = app.imports.io.connect();
-app.config  = require('./config');
-app.utils   = require('./utils').init(app);
-app.models  = require('./models').init(app);
-app.views   = require('./views').init(app);
-app.routers = require('./routers').init(app);
+app.socket      = app.imports.io.connect();
+app.config      = require('./config');
+app.utils       = require('./utils').init(app);
+app.sockets     = require('./sockets').init(app);
+app.models      = require('./models').init(app);
+app.collections = require('./collections').init(app);
+app.views       = require('./views').init(app);
+app.routers     = require('./routers').init(app);
 
 module.exports = app;
-},{"./config":2,"./models":3,"./routers":6,"./templates/file":8,"./templates/menu":9,"./templates/profileName":10,"./templates/upload":12,"./utils":13,"./views":14,"backbone":19,"browserify-zepto":20,"socket.io-client":22,"underscore":23}],2:[function(require,module,exports){
+},{"./collections":3,"./config":4,"./models":5,"./routers":8,"./sockets":10,"./templates/connectRoom":11,"./templates/file":12,"./templates/infoRoom":13,"./templates/menu":14,"./templates/profileFile":15,"./templates/profileName":16,"./utils":18,"./views":19,"backbone":31,"browserify-zepto":32,"socket.io-client":34,"underscore":35}],2:[function(require,module,exports){
+exports.init = function(app) {
+  var _        = app.imports._,
+      $        = app.imports.$,
+      Backbone = app.imports.Backbone;
+
+  return Backbone.Collection.extend({});
+};
+},{}],3:[function(require,module,exports){
+exports.init = function(app) {
+  var collections = {};
+
+  collections.Files = require('./collections-files').init(app);
+
+  return collections;
+};
+},{"./collections-files":2}],4:[function(require,module,exports){
 module.exports = {
   api: {
     file: '/api/upload/file',
@@ -50,7 +70,7 @@ module.exports = {
   },
   roomLifespan: 90
 };
-},{}],3:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 exports.init = function(app) {
   var models = {};
 
@@ -59,7 +79,7 @@ exports.init = function(app) {
 
   return models;
 };
-},{"./models-file":4,"./models-room":5}],4:[function(require,module,exports){
+},{"./models-file":6,"./models-room":7}],6:[function(require,module,exports){
 exports.init = function(app) {
   var _        = app.imports._,
       $        = app.imports.$,
@@ -117,14 +137,21 @@ exports.init = function(app) {
       }
 
       return Backbone.sync.call(this, method, model, options);
+    },
+
+    saveToMyProfile: function() {
+      this.url = '/file/savefile';
+      Backbone.Model.prototype.save.apply(this, arguments);
     }
   });
 };
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 exports.init = function(app) {
   var _        = app.imports._,
       $        = app.imports.$,
       Backbone = app.imports.Backbone;
+
+  app.active.roomModels = [];
 
   return Backbone.Model.extend({
     url: app.config.api.room,
@@ -135,9 +162,13 @@ exports.init = function(app) {
       timeRemaining : '90:00',
       creationDate  : new Date()
     },
+
+    initialize: function() {
+      app.active.roomModels.push(this);
+    }
   });
 };
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 exports.init = function(app) {
   var routers = {};
 
@@ -145,61 +176,125 @@ exports.init = function(app) {
 
   return routers;
 };
-},{"./routers-main":7}],7:[function(require,module,exports){
+},{"./routers-main":9}],9:[function(require,module,exports){
 exports.init = function(app) {
   var socket    = app.socket,
       Backbone  = app.imports.Backbone;
 
-  var roomModel, uploadView, menuView;
-
-  app.active.roomModels = [];
-
   return Backbone.Router.extend({
     routes: {
-      ''      : 'homePage',
-      ':room' : 'roomPage'
+      ''                  : 'homePage',
+      ':room'             : 'roomPage',
+      'profile/:username' : 'profilePage'
     },
 
     initialize: function() {
       window.debug = app;
 
-      roomModel = new app.models.Room();
+      app.room = new app.models.Room();
+      app.files = new app.collections.Files();
+    },
 
-      app.active.roomModels.push(roomModel);
+    clean: function() {
+      app.active.fileModels = app.utils.cleanModels(app.active.fileModels);
 
-      uploadView = new app.views.Upload({
-        model : roomModel
-      });
+      if (app.uploadView) {
+        app.socket.emit('room', {room: ''});
+        app.uploadView.remove();
+      }
+    },
 
-      app.utils.prepend({
-        el     : app.regions.upload,
-        render : uploadView.render().el
-      });
+    homePage: function() {
+      this.clean();
 
-      menuView = new app.views.Menu({
-        model : roomModel
+      app.active.roomModels = app.utils.cleanModels(app.active.roomModels);
+
+      app.room = new app.models.Room();
+
+      app.menuView = new app.views.Menu({
+        model : app.room
       });
 
       app.utils.prepend({
         el     : app.regions.menu,
-        render : menuView.render().el
+        render : app.menuView.render().el
       });
-    },
 
-    homePage: function() {
-      app.active.fileModels = app.utils.cleanModels(app.active.fileModels);
-      roomModel.set({
-        room: ''
+      app.uploadView = new app.views.ConnectRoom({
+        model : app.room
       });
-      app.socket.emit('room', '');
+
+      app.utils.prepend({
+        el     : app.regions.upload,
+        render : app.uploadView.render().el
+      });
     },
 
     roomPage: function(room) {
-      app.socket.emit('room', room);
+      this.clean();
+
+      app.socket.emit('room', {room: room});
+      app.socket.emit('files', {room: room});
+
+      app.uploadView = new app.views.InfoRoom({
+        model : app.room
+      });
+
+      app.utils.prepend({
+        el     : app.regions.upload,
+        render : app.uploadView.render().el
+      });
+
+      app.filesView = new app.views.Files({
+        modelView: app.views.File,
+        collection: app.files
+      });
+
+      var filesRegion = app.regions.files;
+
+      app.utils.prepend({
+        el: filesRegion,
+        render: app.filesView.el
+      });
     }
   });
 };
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
+exports.init = function(app) {
+  app.socket.on('room', function(data) {
+    app.room.set(data);
+  });
+
+  app.socket.on('files', function(data) {
+    data.forEach(function(file) {
+      var item = app.files.find(function(item){
+        return item.get('_id') === file._id;
+      });
+
+      if (item) {
+        return;
+      }
+
+      var fileModel = new app.models.File(file);
+      app.files.add(fileModel);
+    });
+  });
+};
+},{}],11:[function(require,module,exports){
+var jade = require('./runtime');
+
+(function (jade) {
+	module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var buf = [];
+with (locals || {}) {
+var interp;
+buf.push('<div class="flex bck b_mysauce3_light"><div class="joinRoom anchor2 text center color c_white"><input type="text" placeholder="Room code" class="anchor border none padding_medium"/></div><div class="connectRoom anchor1 flex x_center y_center padding_medium text center color c_blue cursor pointer border solid left_small"><span class="fa fa-sign-in padding_right_small"></span><span>Connect</span></div></div>');
+}
+return buf.join("");
+};
+})(jade);
+},{"./runtime":17}],12:[function(require,module,exports){
 var jade = require('./runtime');
 
 (function (jade) {
@@ -268,7 +363,23 @@ buf.push('/></a></div>');
 return buf.join("");
 };
 })(jade);
-},{"./runtime":11}],9:[function(require,module,exports){
+},{"./runtime":17}],13:[function(require,module,exports){
+var jade = require('./runtime');
+
+(function (jade) {
+	module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var buf = [];
+with (locals || {}) {
+var interp;
+buf.push('<div class="flex bck b_mysauce3_light"><div class="room bck b_white padding_medium text bold center"><span class="fa fa-lock padding_right_small"></span><span><a');
+buf.push(attrs({ 'href':('http://shareme.io/' + (model.room) + '') }, {"href":true}));
+buf.push('>' + escape((interp = model.room) == null ? '' : interp) + '</a></span></div><div class="connections bck padding_medium text center color c_green"><span class="fa fa-user padding_right_small"></span><span>' + escape((interp = model.connections) == null ? '' : interp) + '</span></div><div class="timer bck padding_medium text center color c_red"><span class="fa fa-clock-o padding_right_small"></span><span>' + escape((interp = model.timeRemaining) == null ? '' : interp) + '</span></div><div class="uploadFiles bck padding_medium text center color c_blue cursor pointer"><span class="fa fa-cloud-upload"></span><span class="padding_left_small desktop">Upload</span></div></div>');
+}
+return buf.join("");
+};
+})(jade);
+},{"./runtime":17}],14:[function(require,module,exports){
 var jade = require('./runtime');
 
 (function (jade) {
@@ -282,7 +393,76 @@ buf.push('<span class="createRoom text bold cursor pointer"><span class="fa fa-p
 return buf.join("");
 };
 })(jade);
-},{"./runtime":11}],10:[function(require,module,exports){
+},{"./runtime":17}],15:[function(require,module,exports){
+var jade = require('./runtime');
+
+(function (jade) {
+	module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
+attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
+var buf = [];
+with (locals || {}) {
+var interp;
+buf.push('<div class="flex y_center padding_medium"><div class="anchor5"><div>');
+if ( model.filename)
+{
+buf.push('<a');
+buf.push(attrs({ 'href':('/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'target':('_blank'), "class": ('text') + ' ' + ('color') + ' ' + ('c_mysauce2') }, {"href":true,"target":true}));
+buf.push('><span>' + escape((interp = model.name) == null ? '' : interp) + '</span></a>');
+}
+else
+{
+buf.push('<span class="text color c_mysauce2">' + escape((interp = model.name) == null ? '' : interp) + '</span>');
+}
+buf.push('</div><div class="text small desktop">');
+if ( model.filename)
+{
+buf.push('<input');
+buf.push(attrs({ 'value':('http://shareme.io/' + (model.room) + '/file/preview/' + (model.filename) + ''), 'style':('background: transparent;'), 'disabled':(true), "class": ('middle') + ' ' + ('border') + ' ' + ('none') + ' ' + ('width70') + ' ' + ('text') + ' ' + ('small') + ' ' + ('book') }, {"value":true,"style":true,"disabled":true}));
+buf.push('/>');
+}
+buf.push('</div></div><div class="anchor1 text right border rad_small">');
+if ( model.filename)
+{
+buf.push('<a href="/file/savefile" target="_blank" class="text color c_mysauce2"><div class="saveFile text right padding_small"><span class="fa fa-download"></span><span class="padding_left_small desktop">Save file</span></div></a><a');
+buf.push(attrs({ 'href':('/' + (model.room) + '/file/' + (model.filename) + ''), 'target':('_blank'), "class": ('text') + ' ' + ('color') + ' ' + ('c_mysauce2') }, {"href":true,"target":true}));
+buf.push('><div class="downloadLink text right padding_small"><span class="fa fa-download"></span><span class="padding_left_small desktop">Download</span></div></a>');
+}
+else
+{
+buf.push('<div class="queueFile text right padding_small"><span class="desktop">Queue file</span></div>');
+}
+buf.push('<div style="background: rgb(225, 246, 250); width: 0%;" class="progressBar border rad_small hidden padding_small"></div></div></div>');
+if ( model.type == 'application/pdf' || model.type == 'video/avi')
+{
+buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><embed');
+buf.push(attrs({ 'width':('350px'), 'height':('450px'), 'name':('plugin'), 'src':('/profile/' + (model.username) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"width":true,"height":true,"name":true,"src":true,"type":true}));
+buf.push('></embed></div>');
+}
+if ( model.type == 'video/mp4')
+{
+buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><video controls="" name="media"><source');
+buf.push(attrs({ 'src':('/profile/' + (model.username) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"src":true,"type":true}));
+buf.push('/></video></div>');
+}
+if ( model.type == 'audio/mp3')
+{
+buf.push('<div class="flex x_center padding_left_medium padding_right_medium padding_bottom_medium"><audio controls="" name="media"><source');
+buf.push(attrs({ 'src':('/profile/' + (model.username) + '/file/preview/' + (model.filename) + ''), 'type':('' + (model.type) + '') }, {"src":true,"type":true}));
+buf.push('/></audio></div>');
+}
+if ( model.type == 'image/jpeg' || model.type == 'image/png' || model.type == 'image/gif')
+{
+buf.push('<div style="width: 60%;" class="flex x_center text center padding_left_medium padding_right_medium padding_bottom_medium"><a');
+buf.push(attrs({ 'href':('/profile/' + (model.username) + '/file/preview/' + (model.filename) + ''), 'target':('_blank'), "class": ('text') + ' ' + ('center') }, {"href":true,"target":true}));
+buf.push('><img');
+buf.push(attrs({ 'src':('/profile/' + (model.username) + '/file/preview/' + (model.filename) + ''), "class": ('border') + ' ' + ('rad_small') }, {"src":true}));
+buf.push('/></a></div>');
+}
+}
+return buf.join("");
+};
+})(jade);
+},{"./runtime":17}],16:[function(require,module,exports){
 var jade = require('./runtime');
 
 (function (jade) {
@@ -296,7 +476,7 @@ buf.push('<div class="flex"><div class="anchor1 padding_medium width30 border ra
 return buf.join("");
 };
 })(jade);
-},{"./runtime":11}],11:[function(require,module,exports){
+},{"./runtime":17}],17:[function(require,module,exports){
 (function (exports) {
 	
 /*!
@@ -474,73 +654,95 @@ exports.rethrow = function rethrow(err, filename, lineno){
 };
 
 })(module.exports);
-},{"fs":21}],12:[function(require,module,exports){
-var jade = require('./runtime');
-
-(function (jade) {
-	module.exports = function anonymous(locals, attrs, escape, rethrow, merge) {
-attrs = attrs || jade.attrs; escape = escape || jade.escape; rethrow = rethrow || jade.rethrow; merge = merge || jade.merge;
-var buf = [];
-with (locals || {}) {
-var interp;
-buf.push('<div class="flex bck b_mysauce3_light"><div class="joinRoom anchor2 text center color c_white"><input type="text" placeholder="Room code" class="anchor border none padding_medium"/></div><div class="connectRoom anchor1 flex x_center y_center padding_medium text center color c_blue cursor pointer border solid left_small"><span class="fa fa-sign-in padding_right_small"></span><span>Connect</span></div><div class="room bck b_white padding_medium text bold center hidden"><span class="fa fa-lock padding_right_small"></span><span><a');
-buf.push(attrs({ 'href':('http://shareme.io/' + (model.room) + '') }, {"href":true}));
-buf.push('>' + escape((interp = model.room) == null ? '' : interp) + '</a></span></div><div class="connections bck padding_medium text center color c_green hidden"><span class="fa fa-user padding_right_small"></span><span>' + escape((interp = model.connections) == null ? '' : interp) + '</span></div><div class="timer bck padding_medium text center color c_red hidden"><span class="fa fa-clock-o padding_right_small"></span><span>' + escape((interp = model.timeRemaining) == null ? '' : interp) + '</span></div><div class="uploadFiles bck padding_medium text center color c_blue cursor pointer hidden"><span class="fa fa-cloud-upload"></span><span class="padding_left_small desktop">Upload</span></div></div>');
-}
-return buf.join("");
-};
-})(jade);
-},{"./runtime":11}],13:[function(require,module,exports){
+},{"fs":33}],18:[function(require,module,exports){
 exports.init = function(app) {
   var utils = {};
+
+  utils.BaseView = app.imports.Backbone.View.extend({
+    constructor: function() {
+      app.imports.Backbone.View.apply(this, arguments);
+    },
+
+    render: function() {
+      var data, renderedHtml;
+
+      if (this.model) {
+        data = this.model.toJSON();
+      }
+
+      if (this.serializeData) {
+        data = this.serializeData();
+      }
+
+      renderedHtml = this.template({
+        model: data
+      });
+
+      this.el.innerHTML = renderedHtml;
+
+      if (this.onRender) {
+        this.onRender();
+      }
+
+      return this;
+    }
+  });
+
+  utils.CollectionView = utils.BaseView.extend({
+    constructor: function(options){
+      app.utils.BaseView.apply(this, arguments);
+      this.modelView = options.modelView;
+      this.listenTo(this.collection, 'add', this.modelAdded);
+    },
+
+    getModelView: function(model) {
+      return this.modelView;
+    },
+
+    modelAdded: function(item) {
+      var view;
+
+      view = this.renderModel(item);
+
+      this.el.insertBefore(view.el, this.el.firstChild);
+    },
+
+    renderModel: function(item) {
+      var ViewType, view;
+
+      ViewType = this.getModelView(item);
+
+      view = new ViewType({model: item});
+      view.render();
+
+      return view;
+    },
+
+    render: function() {
+      var html = [];
+
+      this.collection.each(function(model) {
+        var view;
+
+        view = this.renderModel(model);
+
+        html.push(view.el);
+      }, this);
+
+      this.el.innerHTML = html.join('');
+
+      if (this.onRender) {
+        this.onRender();
+      }
+
+      return this;
+    }
+  });
 
   utils.prepend = function(options) {
     var el     = options.el,
         render = options.render;
     return el.insertBefore(render, el.firstChild);
-  };
-
-  utils.TimeRemaining = function(creationDate, remainingMinutes) {
-    var self = {};
-    var originalDate, newDate, datesDiff, minutes, seconds, toTwoDigits;
-
-    toTwoDigits = function(digit) {
-      if (digit < 10) {
-        digit = '0' + digit;
-      }
-      return digit;
-    };
-
-    self.remainingInterval = setInterval(function() {
-      originalDate = new Date(creationDate);
-      newDate      = new Date();
-
-      originalDate.setMinutes(originalDate.getMinutes() + remainingMinutes);
-
-      if ((originalDate - newDate) < 0) {
-        self.timeElapsed = true;
-      }
-
-      datesDiff = Math.abs(originalDate - newDate);
-      minutes   = (datesDiff / 1000 / 60) << 0;
-      seconds   = (datesDiff / 1000) % 60;
-
-      minutes = Math.round(minutes);
-      seconds = Math.round(seconds);
-
-      minutes = toTwoDigits(minutes);
-      seconds = toTwoDigits(seconds);
-
-      if (seconds === 60) {
-        minutes = parseInt(minutes, null) + 1;
-        minutes = toTwoDigits(minutes);
-        seconds = '00';
-      }
-
-      self.timeRemaining = minutes + ':' + seconds;
-    }, 1000);
-
-    return self;
   };
 
   utils.cleanModels = function(models) {
@@ -554,35 +756,82 @@ exports.init = function(app) {
 
   return utils;
 };
-},{}],14:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 exports.init = function(app) {
   var views = {};
 
-  views.Upload      = require('./views-upload').init(app);
+  views.ConnectRoom = require('./views-connectRoom').init(app);
+  views.InfoRoom    = require('./views-infoRoom').init(app);
   views.File        = require('./views-file').init(app);
+  views.Files       = require('./views-files').init(app);
+  views.ProfileFile = require('./views-profilefile').init(app);
   views.Menu        = require('./views-menu').init(app);
 
   return views;
 };
-},{"./views-file":15,"./views-menu":16,"./views-upload":17}],15:[function(require,module,exports){
+},{"./views-connectRoom":20,"./views-file":21,"./views-files":22,"./views-infoRoom":23,"./views-menu":24,"./views-profilefile":25}],20:[function(require,module,exports){
 exports.init = function(app) {
   var templates = app.templates,
+      regions   = app.regions,
+      models    = app.models,
       socket    = app.socket,
+      utils     = app.utils,
+      active    = app.active,
       Backbone  = app.imports.Backbone;
 
-  return Backbone.View.extend({
-    template: templates.file,
+  return utils.BaseView.extend({
+    template: templates.connectRoom,
 
-    className: 'border solid bottom_small',
+    className: 'anchor \
+                bck b_stimulation \
+                border solid bottom_small',
 
     events: {
-      'click input': 'linkSelect'
+      'click .connectRoom' : 'connectRoom',
+      'keyup input'        : 'connectRoom',
+      'click input'        : 'connectRoom'
     },
 
     initialize: function() {
       this.listenTo(this.model, 'change', this.render);
       this.listenTo(this.model, 'destroy', this.remove);
+      this.listenTo(app.room, 'change', this.triggerRoute);
+    },
+
+    connectRoom: function(e) {
+      var room = e.currentTarget.value || this.el.querySelector('input').value;
+      app.socket.emit('room', {room: room});
+
+    },
+
+    triggerRoute: function() {
+      if (app.room.get('room')) {
+        app.active.mainRouter.navigate(app.room.get('room'), { trigger: true });
+      }
+    }
+  });
+};
+},{}],21:[function(require,module,exports){
+exports.init = function(app) {
+  var templates = app.templates,
+      socket    = app.socket,
+      Backbone  = app.imports.Backbone;
+
+  return app.utils.BaseView.extend({
+    template: templates.file,
+
+    className: 'border solid bottom_small',
+
+    events: {
+      'click input'     : 'linkSelect',
+      'click .saveFile' : 'saveFile'
+    },
+
+    initialize: function() {
+      this.listenTo(this.model, 'change:filename', this.render);
+      this.listenTo(this.model, 'destroy', this.remove);
       this.listenTo(this.model, 'progress', this.progress);
+      this.listenTo(this.model, 'sync', this.syncfiles);
     },
 
     selectors: function() {
@@ -590,6 +839,10 @@ exports.init = function(app) {
       this.__queueFile = this.el.querySelector('.queueFile');
       this.__anchor1 = this.el.querySelector('.anchor1');
       this.__progressBar  = this.el.querySelector('.progressBar');
+    },
+
+    syncfiles: function() {
+      app.socket.emit('files', {room: this.model.get('room')});
     },
 
     linkSelect: function(e) {
@@ -614,24 +867,96 @@ exports.init = function(app) {
       this.__progressBar.style.width = percentComplete + '%';
     },
 
-    uploadFile: function() {
-      this.model.save({}, {
-        success: function(model) {
-          socket.emit('file:create', model);
-        }
-      });
-    },
-
-    render: function() {
-      this.el.innerHTML = this.template({
-        model: this.model.toJSON()
-      });
+    onRender: function() {
       this.selectors();
-      return this;
     }
   });
 };
-},{}],16:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
+exports.init = function(app) {
+  var templates = app.templates,
+      socket    = app.socket,
+      Backbone  = app.imports.Backbone;
+
+  return app.utils.CollectionView.extend({});
+};
+},{}],23:[function(require,module,exports){
+exports.init = function(app) {
+  var templates = app.templates,
+      regions   = app.regions,
+      models    = app.models,
+      socket    = app.socket,
+      utils     = app.utils,
+      active    = app.active,
+      Backbone  = app.imports.Backbone;
+
+  return utils.BaseView.extend({
+    template: templates.infoRoom,
+
+    className: 'anchor \
+                bck b_stimulation \
+                border solid bottom_small',
+
+    events: {
+      'click .connectRoom' : 'connectRoom',
+      'keyup input'        : 'connectRoom',
+      'click input'        : 'connectRoom',
+      'click .uploadFiles' : 'clickFakeInput'
+    },
+
+    initialize: function() {
+      this.listenTo(this.model, 'change', this.render);
+      this.listenTo(this.model, 'destroy', this._remove);
+
+      this.fakeInputFile = document.createElement('input');
+      this.fakeInputFile.setAttribute('type', 'file');
+      this.fakeInputFile.setAttribute('multiple', 'true');
+      this.fakeInputFile.addEventListener('change', this.uploadFiles.bind(this));
+    },
+
+    uploadFiles: function() {
+      var files, file, modelRoom, fileView;
+
+      files     = this.fakeInputFile.files;
+      modelRoom = this.model.get('room');
+
+      if (this.model.get('room') !== '') {
+        for (var i in files) {
+          file = files[i];
+
+          if (typeof file === 'object') {
+            var fileModel = new app.models.File({
+              files : file,
+              name  : file.name,
+              size  : file.size,
+              room  : modelRoom
+            });
+
+            app.files.add(fileModel);
+            fileModel.save({});
+          }
+        }
+      }
+    },
+
+    clickFakeInput: function() {
+      this.fakeInputFile.files = '';
+      this.fakeInputFile.click();
+    },
+
+    _remove: function() {
+      this.fakeInputFile.remove();
+      this.remove();
+    },
+
+    onRender: function() {
+      if (this.model.get('timeRemaining') === '00:01') {
+        window.location.reload();
+      }
+    }
+  });
+};
+},{}],24:[function(require,module,exports){
 exports.init = function(app) {
   var templates = app.templates,
       socket    = app.socket,
@@ -650,7 +975,7 @@ exports.init = function(app) {
     },
 
     initialize: function() {
-      this.listenTo(this.model, 'change', this.render);
+      this.listenTo(this.model, 'change:room', this.render);
       this.listenTo(this.model, 'destroy', this.remove);
     },
 
@@ -661,26 +986,20 @@ exports.init = function(app) {
         success: function(model) {
           self.model = model;
 
-          socket.emit('room', self.model.get('room'));
-
-          app.active.mainRouter.navigate(self.model.get('room'));
+          app.active.mainRouter.navigate(self.model.get('room'), { trigger: true});
         }
       });
     },
 
     disconnectRoom: function() {
-      this.model.set({
-        room: ''
-      });
-
-      socket.emit('room', '');
-
-      app.active.fileModels = utils.cleanModels(app.active.fileModels);
-      app.active.mainRouter.navigate(this.model.get('room'), { trigger: true });
+      app.active.mainRouter.navigate('', { trigger: true });
     },
 
     render: function() {
       this.el.innerHTML = this.template({});
+
+      this.el.querySelector('.createRoom').classList.remove('hidden');
+      this.el.querySelector('.disconnectRoom').classList.add('hidden');
 
       if (this.model.get('room') !== '') {
         this.el.querySelector('.createRoom').classList.add('hidden');
@@ -691,196 +1010,134 @@ exports.init = function(app) {
     }
   });
 };
-},{}],17:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 exports.init = function(app) {
   var templates = app.templates,
-      regions   = app.regions,
-      models    = app.models,
       socket    = app.socket,
-      utils     = app.utils,
-      active    = app.active,
       Backbone  = app.imports.Backbone;
 
   return Backbone.View.extend({
-    template: templates.upload,
+    template: templates.profileFile,
 
-    className: 'anchor \
-                bck b_stimulation \
-                border solid bottom_small',
+    className: 'border solid bottom_small',
 
     events: {
-      'click .connectRoom' : 'connectRoom',
-      'keyup input'        : 'connectRoom',
-      'click input'        : 'connectRoom',
-      'click .uploadFiles' : 'clickFakeInput'
+      'click input'     : 'linkSelect',
+      'click .saveFile' : 'saveFile'
     },
 
     initialize: function() {
       this.listenTo(this.model, 'change', this.render);
-      this.listenTo(this.model, 'destroy', this._remove);
-
-      this.sockets();
-
-      this.fakeInputFile = document.createElement('input');
-      this.fakeInputFile.setAttribute('type', 'file');
-      this.fakeInputFile.setAttribute('multiple', 'true');
-      this.fakeInputFile.addEventListener('change', this.uploadFiles.bind(this));
-    },
-
-    selectors: function() {
-      this.__joinRoom = this.el.querySelector('.joinRoom');
-      this.__connectRoom = this.el.querySelector('.connectRoom');
-      this.__room = this.el.querySelector('.room');
-      this.__connections = this.el.querySelector('.connections');
-      this.__timer = this.el.querySelector('.timer');
-      this.__uploadFiles = this.el.querySelector('.uploadFiles');
-    },
-
-    connectRoom: function(e) {
-      var room = e.currentTarget.value || this.el.querySelector('input').value;
-
-      socket.emit('room', room);
-    },
-
-    clickFakeInput: function() {
-      this.fakeInputFile.files = '';
-      this.fakeInputFile.click();
-    },
-
-    sockets: function() {
-      socket.on('file:create', this.newFile.bind(this));
-      socket.on('room:info', this.roomInfo.bind(this));
-    },
-
-    newFile: function(file) {
-      var fileModel, fileView, filesRegion;
-
-      fileModel = new app.models.File(file);
-      fileView = new app.views.File({
-        model: fileModel
-      });
-
-      filesRegion = app.regions.files;
-
-      app.utils.prepend({
-        el: filesRegion,
-        render: fileView.render().el
-      });
-
-      return fileView;
-    },
-
-    roomInfo: function(roomData) {
-      var modelRoom = this.model.get('room');
-
-      if (modelRoom === roomData.room) {
-        this.model.set({
-          room         : roomData.room,
-          creationDate : roomData.creationDate,
-          connections  : roomData.clients
-        });
-
-        return;
-      }
-
-      this.model.set({
-        room         : roomData.room,
-        creationDate : roomData.creationDate,
-        connections  : roomData.clients
-      });
-
-      app.active.mainRouter.navigate(this.model.get('room'));
-    },
-
-    _remove: function() {
-      this.fakeInputFile.remove();
-      this.remove();
-    },
-
-    _removeIntervals: function() {
-      if (this.timerInterval !== undefined) {
-        clearInterval(this.timerInterval);
-        this.timerInterval = undefined;
-      }
-      if (this.timer) {
-        clearInterval(this.timer.remainingInterval);
-      }
-    },
-
-    uploadFiles: function() {
-      var files, file, modelRoom, fileView;
-
-      files     = this.fakeInputFile.files;
-      modelRoom = this.model.get('room');
-
-      if (this.model.get('room') !== '') {
-        for (var i in files) {
-          file = files[i];
-
-          if (typeof file === 'object') {
-            fileView = this.newFile({
-              files    : file,
-              name     : file.name,
-              size     : file.size,
-              room     : modelRoom,
-              clientIp : JSON.stringify(this.clientIp)
-            });
-            fileView.uploadFile();
-          }
-        }
-      }
-    },
-
-    remaining: function() {
-      var self          = this,
-          creationDate  = this.model.get('creationDate');
-
-      this.timer = new utils.TimeRemaining(creationDate, app.config.roomLifespan);
-
-      this.timerInterval = setInterval(function() {
-        var timer = self.timer,
-            model = self.model;
-
-        model.set('timeRemaining', timer.timeRemaining);
-
-        if (timer.timeRemaining === '00:01' || timer.timeElapsed === true) {
-          clearInterval(timer.remainingInterval);
-          clearInterval(self.timerInterval);
-
-          window.location.reload();
-        }
-      }, 1000);
+      this.listenTo(this.model, 'destroy', this.remove);
+      this.listenTo(this.model, 'progress', this.progress);
     },
 
     render: function() {
       this.el.innerHTML = this.template({
         model: this.model.toJSON()
       });
-
-      this.selectors();
-
-      if (this.model.get('room') !== '') {
-        if (this.timerInterval === undefined) {
-          this.remaining();
-        }
-
-        this.__joinRoom.classList.add('hidden');
-        this.__connectRoom.classList.add('hidden');
-        this.__room.classList.remove('hidden');
-        this.__connections.classList.remove('hidden');
-        this.__timer.classList.remove('hidden');
-        this.__uploadFiles.classList.remove('hidden');
-
-        return this;
-      }
-
-      this._removeIntervals();
-
       return this;
     }
   });
 };
-},{}],18:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
+var app = require('../js/app');
+var Backbone = app.imports.Backbone;
+
+describe("Connect room view", function() {
+  var roomData = {
+    room: 'sD8xY',
+    connections: 2,
+    timeRemaining: '23:43'
+  };
+  app.room = new app.models.Room(roomData);
+  var connectRoom = new app.views.ConnectRoom({
+    model: app.room
+  });
+  connectRoom.render();
+
+  it("should render connect room view", function() {
+    var placeholder = connectRoom.el.querySelector('input').getAttribute('placeholder');
+    expect(placeholder).toEqual('Room code');
+  });
+});
+},{"../js/app":1}],27:[function(require,module,exports){
+var app = require('../js/app');
+var Backbone = app.imports.Backbone;
+
+describe("File model", function() {
+  var fileData = {
+    _id: "5366219d854696067744fc64",
+    clicks: 0,
+    filename: "dreyacosta.png",
+    files: {
+      name: "dreyacosta.png",
+      size: 34582,
+      type: "image/png"
+    },
+    name: "dreyacosta.png",
+    path: "",
+    public: true,
+    registerDate: "2014-05-04T11:16:45.195Z",
+    room: "L9u6h",
+    size: "34582",
+    type: "image/png"
+  };
+
+  beforeEach(function() {
+    spyOn(Backbone.$, 'ajax').and.callFake(function(options) {
+      options.success(fileData);
+    });
+  });
+
+  it("should create and upload a file model", function() {
+    var file = new app.models.File({
+      files: fileData.files,
+      name: fileData.files.name,
+      size: fileData.files.size,
+      room: fileData.room,
+    });
+
+    file.save();
+
+    expect(file.get('_id')).toEqual('5366219d854696067744fc64');
+    expect(file.get('filename')).toEqual('dreyacosta.png');
+  });
+});
+},{"../js/app":1}],28:[function(require,module,exports){
+var app = require('../js/app');
+var Backbone = app.imports.Backbone;
+
+describe("Info room view", function() {
+  var infoRoom = new app.views.InfoRoom({
+    model: app.room
+  });
+  infoRoom.render();
+
+  it("should render room view", function() {
+    var roomDiv = infoRoom.el.querySelector('.room');
+    var roomCode = roomDiv.querySelector('a').innerHTML;
+
+    expect(roomCode).toEqual('sD8xY');
+  });
+});
+},{"../js/app":1}],29:[function(require,module,exports){
+var app = require('../js/app');
+var Backbone = app.imports.Backbone;
+
+describe("Menu view", function() {
+  var menu = new app.views.Menu({
+    model: app.room
+  });
+  menu.render();
+
+  it("should render menu view", function() {
+    var createRoomDiv = menu.el.querySelector('.createRoom');
+    var hasHiddenClass = createRoomDiv.classList.contains('hidden');
+    expect(hasHiddenClass).toEqual(true);
+  });
+});
+},{"../js/app":1}],30:[function(require,module,exports){
 var app = require('../js/app');
 var Backbone = app.imports.Backbone;
 
@@ -921,7 +1178,7 @@ describe("Room model", function() {
     });
   });
 });
-},{"../js/app":1}],19:[function(require,module,exports){
+},{"../js/app":1}],31:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -2531,7 +2788,7 @@ describe("Room model", function() {
 
 }));
 
-},{"underscore":23}],20:[function(require,module,exports){
+},{"underscore":35}],32:[function(require,module,exports){
 /* Zepto v1.1.3 - zepto event ajax form ie - zeptojs.com/license */
 
 
@@ -4083,9 +4340,9 @@ var Zepto = module.exports = (function() {
   }
 })(Zepto)
 
-},{}],21:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 
-},{}],22:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /*! Socket.IO.js build:0.9.16, development. Copyright(c) 2011 LearnBoost <dev@learnboost.com> MIT Licensed */
 
 var io = ('undefined' === typeof module ? {} : module.exports);
@@ -7959,7 +8216,7 @@ if (typeof define === "function" && define.amd) {
   define([], function () { return io; });
 }
 })();
-},{}],23:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 //     Underscore.js 1.6.0
 //     http://underscorejs.org
 //     (c) 2009-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -9304,4 +9561,4 @@ if (typeof define === "function" && define.amd) {
   }
 }).call(this);
 
-},{}]},{},[18])
+},{}]},{},[26,27,28,29,30])

@@ -21,7 +21,7 @@ describe("API", function() {
         room = res.body.room;
 
         expect(res.type).to.equal('application/json');
-        res.body.should.have.property('room');
+        res.body.should.have.property('roomm');
         res.body.should.have.property('creationDate');
         done();
       });
