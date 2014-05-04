@@ -26,12 +26,12 @@ noderplate.server          = http.createServer(noderplate.app);
 noderplate.io              = noderplate.imports.io.listen(noderplate.server);
 noderplate.app.MongoStore  = noderplate.imports.MongoStore(express);
 
-noderplate.config = require('./config/config-main')[noderplate.app.get('env')];
-
 // Set up for Unit Tests
 if (process.argv[2] === 'test') {
   noderplate.app.set('env', 'simplemocha');
   noderplate.config = require('./config/config-main-sample')[noderplate.app.get('env')];
+} else {
+  noderplate.config = require('./config/config-main')[noderplate.app.get('env')];
 }
 
 // Session store
