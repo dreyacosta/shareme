@@ -1,8 +1,9 @@
 {
   "name": "shareme",
-  "version": "0.1.0",
+  "version": "0.1.5",
   "private": false,
   "scripts": {
+    "test": "grunt test --verbose",
     "postinstall": "node_modules/.bin/bower install"
   },
   "dependencies": {

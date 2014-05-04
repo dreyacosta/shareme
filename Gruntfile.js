@@ -15,7 +15,7 @@ module.exports = function(grunt) {
       test: {
         files: {
           'public/js/app_test.js': ['browserify/js/app.js'],
-          'spec/client/clientSpec.js': ['browserify/spec/clientSpec.js']
+          'spec/client/clientSpec.js': ['browserify/spec/*.js']
         }
       }
     },
@@ -191,6 +191,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-jade');
 
+  grunt.registerTask('test', ['browserify:test', 'simplemocha', 'jasmine']);
   grunt.registerTask('build', ['clean', 'jshint', 'jade', 'browserify', 'stylus', 'copy:public', 'uglify', 'simplemocha', 'jasmine', 'clean:build']);
   grunt.registerTask('default', ['clean', 'jshint', 'jade', 'browserify', 'stylus', 'copy:public', 'simplemocha', 'jasmine']);
 
