@@ -191,7 +191,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-jade');
 
-  grunt.registerTask('test', ['browserify:test', 'simplemocha', 'jasmine']);
+  grunt.registerTask('test', ['jade', 'browserify:test', 'simplemocha', 'jasmine']);
   grunt.registerTask('build', ['clean', 'jshint', 'jade', 'browserify', 'stylus', 'copy:public', 'uglify', 'simplemocha', 'jasmine', 'clean:build']);
   grunt.registerTask('default', ['clean', 'jshint', 'jade', 'browserify', 'stylus', 'copy:public', 'simplemocha', 'jasmine']);
 
