@@ -7,9 +7,7 @@
       else
         span.text.color.c_mysauce2 #{model.name}
     div.text.small.desktop
-      //- span.middle #{model.size}
       if model.filename
-        //- span.middle.padding_left_small -
         input.middle.border.none.width70.text.small.book(value='http://shareme.io/#{model.room}/file/preview/#{model.filename}', style='background: transparent;', disabled)
   .anchor1.text.right.border.rad_small
     if model.filename
