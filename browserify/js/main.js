@@ -1,3 +1,5 @@
+'use strict';
+
 var app        = require('./app'),
     lastScroll = 0,
     shareFiles = document.querySelector('.shareFiles'),

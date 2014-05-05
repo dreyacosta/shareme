@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(noderplate) {
   var models    = {},
       mongoose  = noderplate.imports.mongoose;

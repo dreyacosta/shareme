@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(noderplate) {
   var utils   = {},
       bcrypt  = noderplate.imports.bcrypt,

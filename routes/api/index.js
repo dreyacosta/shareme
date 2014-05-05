@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(noderplate) {
   var app         = noderplate.app,
       middlewares = noderplate.app.config.middlewares,

@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(noderplate) {
   var sendmail   = {};
   var nodemailer = noderplate.imports.nodemailer;

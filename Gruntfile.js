@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = function(grunt) {
 
   grunt.initConfig({
@@ -90,6 +92,7 @@ module.exports = function(grunt) {
           document: true,
           define: true,
           describe: true,
+          xdescribe: true,
           beforeEach: true,
           afterEach: true,
           expect: true,

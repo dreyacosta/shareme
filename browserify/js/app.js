@@ -1,3 +1,5 @@
+'use strict';
+
 var app = {
   imports     : {},
   regions     : {},

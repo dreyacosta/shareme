@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(app) {
   var _        = app.imports._,
       $        = app.imports.$,

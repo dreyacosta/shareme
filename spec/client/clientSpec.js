@@ -1,4 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
 var app = {
   imports     : {},
   regions     : {},
@@ -47,6 +49,8 @@ app.routers     = require('./routers').init(app);
 
 module.exports = app;
 },{"./collections":3,"./config":4,"./models":5,"./routers":8,"./sockets":10,"./templates/connectRoom":11,"./templates/file":12,"./templates/infoRoom":13,"./templates/menu":14,"./templates/profileFile":15,"./templates/profileName":16,"./utils":18,"./views":19,"backbone":31,"browserify-zepto":32,"socket.io-client":34,"underscore":35}],2:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var _        = app.imports._,
       $        = app.imports.$,
@@ -55,6 +59,8 @@ exports.init = function(app) {
   return Backbone.Collection.extend({});
 };
 },{}],3:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var collections = {};
 
@@ -63,6 +69,8 @@ exports.init = function(app) {
   return collections;
 };
 },{"./collections-files":2}],4:[function(require,module,exports){
+'use strict';
+
 module.exports = {
   api: {
     file: '/api/upload/file',
@@ -71,6 +79,8 @@ module.exports = {
   roomLifespan: 90
 };
 },{}],5:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var models = {};
 
@@ -80,6 +90,8 @@ exports.init = function(app) {
   return models;
 };
 },{"./models-file":6,"./models-room":7}],6:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var _        = app.imports._,
       $        = app.imports.$,
@@ -146,6 +158,8 @@ exports.init = function(app) {
   });
 };
 },{}],7:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var _        = app.imports._,
       $        = app.imports.$,
@@ -169,6 +183,8 @@ exports.init = function(app) {
   });
 };
 },{}],8:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var routers = {};
 
@@ -177,6 +193,8 @@ exports.init = function(app) {
   return routers;
 };
 },{"./routers-main":9}],9:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var socket    = app.socket,
       Backbone  = app.imports.Backbone;
@@ -260,6 +278,8 @@ exports.init = function(app) {
   });
 };
 },{}],10:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   app.socket.on('room', function(data) {
     app.room.set(data);
@@ -655,6 +675,8 @@ exports.rethrow = function rethrow(err, filename, lineno){
 
 })(module.exports);
 },{"fs":33}],18:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var utils = {};
 
@@ -757,6 +779,8 @@ exports.init = function(app) {
   return utils;
 };
 },{}],19:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var views = {};
 
@@ -770,6 +794,8 @@ exports.init = function(app) {
   return views;
 };
 },{"./views-connectRoom":20,"./views-file":21,"./views-files":22,"./views-infoRoom":23,"./views-menu":24,"./views-profilefile":25}],20:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var templates = app.templates,
       regions   = app.regions,
@@ -812,6 +838,8 @@ exports.init = function(app) {
   });
 };
 },{}],21:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var templates = app.templates,
       socket    = app.socket,
@@ -873,6 +901,8 @@ exports.init = function(app) {
   });
 };
 },{}],22:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var templates = app.templates,
       socket    = app.socket,
@@ -881,6 +911,8 @@ exports.init = function(app) {
   return app.utils.CollectionView.extend({});
 };
 },{}],23:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var templates = app.templates,
       regions   = app.regions,
@@ -957,6 +989,8 @@ exports.init = function(app) {
   });
 };
 },{}],24:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var templates = app.templates,
       socket    = app.socket,
@@ -1011,6 +1045,8 @@ exports.init = function(app) {
   });
 };
 },{}],25:[function(require,module,exports){
+'use strict';
+
 exports.init = function(app) {
   var templates = app.templates,
       socket    = app.socket,

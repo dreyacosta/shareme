@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(app) {
   var socket    = app.socket,
       Backbone  = app.imports.Backbone;

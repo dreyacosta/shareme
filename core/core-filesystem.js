@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(noderplate) {
   var filesystem = {},
       Q          = noderplate.imports.Q,

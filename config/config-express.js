@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(noderplate) {
   var app        = noderplate.app,
       path       = noderplate.imports.path,

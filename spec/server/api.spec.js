@@ -1,3 +1,5 @@
+'use strict';
+
 var expect     = require('chai').expect,
     should     = require('chai').should(),
     request    = require('supertest'),

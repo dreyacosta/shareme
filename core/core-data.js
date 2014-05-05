@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(noderplate) {
   var data  = {},
       File  = noderplate.app.models.File,

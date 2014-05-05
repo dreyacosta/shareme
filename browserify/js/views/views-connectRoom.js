@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(app) {
   var templates = app.templates,
       regions   = app.regions,

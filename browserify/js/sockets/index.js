@@ -1,3 +1,5 @@
+'use strict';
+
 exports.init = function(app) {
   app.socket.on('room', function(data) {
     app.room.set(data);

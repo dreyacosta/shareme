@@ -1,3 +1,5 @@
+'use strict';
+
 var noderplate = require('./noderplate');
 
 noderplate.io.sockets.on('connection', function(socket) {

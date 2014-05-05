@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   api: {
     file: '/api/upload/file',
